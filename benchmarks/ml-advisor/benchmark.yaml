@@ -1,0 +1,336 @@
+name: ml-advisor
+description: "ML Experiment Advisor — propose the best next hyperparameter change given experiment history"
+fast_tasks:
+  - task_01
+  - task_02
+  - task_03
+  - task_04
+  - task_06
+  - task_07
+  - task_09
+  - task_10
+  - task_13
+  - task_14
+  - task_15
+  - task_17
+  - task_18
+  - task_20
+  - task_22
+  - task_23
+  - task_25
+  - task_26
+  - task_28
+  - task_30
+tasks:
+  - name: task_01
+    instruction: |
+      You are an ML experiment advisor. Read context.md for the setup, results.tsv for experiment
+      history, and train.py for current hyperparameters. Propose the single best next hyperparameter
+      change that will lower val_bpb. Write your proposal to proposal.json with fields: parameter,
+      old_value, new_value, rationale. Think carefully about what the experiment history tells you
+      about which directions are promising vs already explored.
+    workspace: ./workspaces/task_01
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_02
+    instruction: |
+      You are an ML experiment advisor. Read context.md for the setup, results.tsv for experiment
+      history, and train.py for current hyperparameters. Propose the single best next hyperparameter
+      change that will lower val_bpb. Write your proposal to proposal.json with fields: parameter,
+      old_value, new_value, rationale. Pay attention to what has already been tried and what worked
+      vs failed. Don't repeat failed experiments.
+    workspace: ./workspaces/task_02
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_03
+    instruction: |
+      You are an ML experiment advisor at the mid-point of an experiment series. Read context.md,
+      results.tsv, and train.py. Many obvious changes have been tried. Propose the single best
+      next hyperparameter change that will lower val_bpb. Write proposal.json with fields:
+      parameter, old_value, new_value, rationale. Avoid repeating failed experiments — check the
+      history carefully.
+    workspace: ./workspaces/task_03
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_04
+    instruction: |
+      You are an ML experiment advisor in the late stage. Read context.md, results.tsv, and
+      train.py. Most architecture and many optimization changes have been tried and failed.
+      Propose the single best next hyperparameter change to lower val_bpb. Focus on learning
+      rate scheduling, regularization, or other optimization tricks that haven't been explored.
+      Write proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_04
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_05
+    instruction: |
+      You are an ML experiment advisor in the very late stage. Read context.md, results.tsv,
+      and train.py. Almost all obvious hyperparameters have been tried. The current setup is
+      already well-tuned. Propose a creative next experiment — something novel that hasn't been
+      attempted. Write proposal.json with fields: parameter, old_value, new_value, rationale.
+      Do NOT repeat any previously-failed direction.
+    workspace: ./workspaces/task_05
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_06
+    instruction: |
+      You are an ML experiment advisor. Read context.md for the setup, results.tsv for experiment
+      history, and train.py for current hyperparameters. Read train.py carefully — every parameter
+      listed is a potential knob. Propose the single best next hyperparameter change that will lower
+      val_bpb. Write your proposal to proposal.json with fields: parameter, old_value, new_value,
+      rationale.
+    workspace: ./workspaces/task_06
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_07
+    instruction: |
+      You are an ML experiment advisor. Read context.md for the setup, results.tsv for experiment
+      history, and train.py for current hyperparameters. Propose the single best next hyperparameter
+      change that will lower val_bpb. Write your proposal to proposal.json with fields: parameter,
+      old_value, new_value, rationale. Pay close attention to what has already been tried and
+      FAILED — do not repeat failed directions.
+    workspace: ./workspaces/task_07
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_08
+    instruction: |
+      You are an ML experiment advisor. Read context.md for the hardware constraints, results.tsv
+      for experiment history, and train.py for current hyperparameters. This is a budget GPU setup
+      with a fixed wall-clock time budget — changes that add parameters reduce the number of
+      training steps. Propose the single best next hyperparameter change that will lower val_bpb.
+      Write your proposal to proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_08
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_09
+    instruction: |
+      You are an ML experiment advisor. Read context.md, results.tsv, and train.py. Propose the
+      single best next hyperparameter change that will lower val_bpb. Write your proposal to
+      proposal.json with fields: parameter, old_value, new_value, rationale. Think carefully about
+      what the experiment history tells you — some directions are promising, others have been
+      exhausted.
+    workspace: ./workspaces/task_09
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_10
+    instruction: |
+      You are an ML experiment advisor. Read context.md, results.tsv, and train.py. Propose the
+      single best next hyperparameter change that will lower val_bpb. Write your proposal to
+      proposal.json with fields: parameter, old_value, new_value, rationale. Do NOT repeat any
+      previously-failed experiment direction.
+    workspace: ./workspaces/task_10
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_11
+    instruction: |
+      You are an ML experiment advisor. Read context.md, results.tsv, and train.py. Propose the
+      single best next hyperparameter change that will lower val_bpb. Write your proposal to
+      proposal.json with fields: parameter, old_value, new_value, rationale. Do NOT repeat any
+      previously-failed experiment direction.
+    workspace: ./workspaces/task_11
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_12
+    instruction: |
+      You are an ML experiment advisor. Read context.md, results.tsv, and train.py. Note that
+      results.tsv rows may not be in chronological order — read ALL rows to understand the complete
+      experiment history before proposing. Propose the single best next hyperparameter change that
+      will lower val_bpb. Write your proposal to proposal.json with fields: parameter, old_value,
+      new_value, rationale.
+    workspace: ./workspaces/task_12
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_13
+    instruction: |
+      You are an ML experiment advisor. Read context.md, results.tsv, and train.py. Propose the
+      single best next hyperparameter change that will lower val_bpb. Write your proposal to
+      proposal.json with fields: parameter, old_value, new_value, rationale. Do NOT repeat any
+      previously-failed experiment direction — check the history carefully.
+    workspace: ./workspaces/task_13
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_14
+    instruction: |
+      You are an ML experiment advisor at the mid-point of an experiment series. Read context.md,
+      results.tsv, and train.py. Warmdown has been tuned. Propose the single best next
+      hyperparameter change that will lower val_bpb. Write your proposal to proposal.json with
+      fields: parameter, old_value, new_value, rationale. Avoid repeating failed experiments.
+    workspace: ./workspaces/task_14
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_15
+    instruction: |
+      You are an ML experiment advisor at the mid-point of an experiment series. Read context.md,
+      results.tsv, and train.py. Architecture and batch size changes have been explored. Propose
+      the single best next hyperparameter change that will lower val_bpb. Write your proposal to
+      proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_15
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_16
+    instruction: |
+      You are an ML experiment advisor at the mid-point of an experiment series. Read context.md,
+      results.tsv, and train.py. Many architecture changes have been tried. Propose the single
+      best next hyperparameter change that will lower val_bpb. Write your proposal to proposal.json
+      with fields: parameter, old_value, new_value, rationale. Do NOT repeat any previously-failed
+      direction.
+    workspace: ./workspaces/task_16
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_17
+    instruction: |
+      You are an ML experiment advisor. Read context.md, results.tsv, and train.py. Most
+      architecture hyperparameters have been explored. Propose the single best next hyperparameter
+      change that will lower val_bpb. Focus on LR schedule parameters that haven't been tried.
+      Write your proposal to proposal.json with fields: parameter, old_value, new_value, rationale.
+      Do NOT repeat any previously-failed direction.
+    workspace: ./workspaces/task_17
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_18
+    instruction: |
+      You are an ML experiment advisor in the late stage. Read context.md, results.tsv, and
+      train.py. Most architecture and many optimization changes have been tried and failed.
+      Propose the single best next hyperparameter change to lower val_bpb. Focus on learning
+      rate scheduling or optimization tricks that haven't been explored.
+      Write proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_18
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_19
+    instruction: |
+      You are an ML experiment advisor in the late stage. Read context.md, results.tsv, and
+      train.py. Architecture, attention, batch, and MLP changes have all been tried. Propose
+      the single best next hyperparameter change to lower val_bpb. Write proposal.json with
+      fields: parameter, old_value, new_value, rationale. Do NOT repeat failed experiments.
+    workspace: ./workspaces/task_19
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_20
+    instruction: |
+      You are an ML experiment advisor in the late stage. Read context.md, results.tsv, and
+      train.py. Warmdown search is fully exhausted (0.3, 0.5, 0.7, 0.8 all tested). Propose
+      the single best next hyperparameter change to lower val_bpb. Write proposal.json with
+      fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_20
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_21
+    instruction: |
+      You are an ML experiment advisor in the late stage. Read context.md, results.tsv, and
+      train.py. Architecture, attention patterns, MLP, and warmdown are all exhausted. Propose
+      the single best next hyperparameter change to lower val_bpb. Write proposal.json with
+      fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_21
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_22
+    instruction: |
+      You are an ML experiment advisor in the very late stage. All 16 experiments are visible
+      in results.tsv. Read context.md, results.tsv, and train.py. The LR floor is already set.
+      Propose a NOVEL next experiment that targets a parameter not yet explored. Write
+      proposal.json with fields: parameter, old_value, new_value, rationale. Do NOT repeat
+      any previously-failed direction.
+    workspace: ./workspaces/task_22
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_23
+    instruction: |
+      You are an ML experiment advisor in the very late stage. All 16 experiments visible.
+      Read context.md, results.tsv, and train.py. Focus specifically on learning rate schedule
+      parameters that haven't been tuned — embedding LR, warmup ratio, Adam betas, or scalar LR.
+      Write proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_23
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_24
+    instruction: |
+      You are an ML experiment advisor in the very late stage. All 16 experiments visible.
+      Read context.md, results.tsv, and train.py. Focus specifically on regularization — weight
+      decay has never been tried, and Adam beta tuning could serve as implicit regularization.
+      Write proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_24
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_25
+    instruction: |
+      You are an ML experiment advisor. This is a Hail Mary — almost everything has been tried.
+      Read context.md, results.tsv, and train.py. Propose something creative and novel that
+      hasn't been attempted before. Any parameter is fair game as long as it hasn't been tried.
+      Write proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_25
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_26
+    instruction: |
+      You are an ML experiment advisor in an extended experiment series (17 experiments done).
+      Read context.md, results.tsv, and train.py. Weight decay was just adopted. Propose the
+      single best next change. Write proposal.json with fields: parameter, old_value, new_value,
+      rationale. Do NOT repeat any previously-failed direction.
+    workspace: ./workspaces/task_26
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_27
+    instruction: |
+      You are an ML experiment advisor. 18 experiments done, embedding LR increase just failed.
+      Read context.md, results.tsv, and train.py. Propose the single best next change. Write
+      proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_27
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_28
+    instruction: |
+      You are an ML experiment advisor. 19 experiments done, warmup ratio was just adopted.
+      Read context.md, results.tsv, and train.py. Very few untried directions remain. Propose
+      the single best next change. Write proposal.json with fields: parameter, old_value,
+      new_value, rationale.
+    workspace: ./workspaces/task_28
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_29
+    instruction: |
+      You are an ML experiment advisor. 20 experiments done, Adam beta1 adjustment just failed.
+      Read context.md, results.tsv, and train.py. Only a handful of untried parameters remain.
+      Propose the single best next change. Write proposal.json with fields: parameter, old_value,
+      new_value, rationale.
+    workspace: ./workspaces/task_29
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120
+
+  - name: task_30
+    instruction: |
+      You are an ML experiment advisor at the absolute end of an exhaustive search. 21 experiments
+      done. Read context.md, results.tsv, and train.py. Only SCALAR_LR, UNEMBEDDING_LR, and
+      ASPECT_RATIO remain completely untried. Propose the single best next change. Write
+      proposal.json with fields: parameter, old_value, new_value, rationale.
+    workspace: ./workspaces/task_30
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify.py"]
+    timeout: 120

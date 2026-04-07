@@ -1,0 +1,22 @@
+commit	val_bpb	memory_gb	status	description
+a1b2c3d	1.0980	44.0	keep	baseline: depth=6 full attention batch=131K warmdown=0.5 LR_floor=0
+b2c3d4e	1.1017	44.5	discard	increase depth from 6 to 8
+c3d4e5f	1.0961	44.2	keep	switch window pattern from L to SSSL (sliding window attention)
+d4e5f6g	1.0990	45.0	discard	depth 8 with SSSL pattern
+e5f6g7h	1.1549	38.0	discard	reduce depth from 6 to 4 with SSSL
+f6g7h8i	1.0994	44.2	discard	warmdown ratio 0.5 to 0.3
+g7h8i9j	1.0960	44.2	keep	warmdown ratio 0.5 to 0.7
+h8i9j0k	1.1007	22.1	discard	halve batch size for 2x training steps
+i9j0k1l	1.1078	42.0	discard	grouped query attention (n_kv_head=1)
+j0k1l2m	1.1032	44.0	discard	HEAD_DIM 128 to 64
+k1l2m3n	1.0961	44.2	discard	matrix LR 0.04 to 0.05 (marginal worse)
+l2m3n4o	1.1000	42.0	discard	MLP ratio 4 to 3
+m3n4o5p	1.0961	44.2	discard	warmdown 0.7 to 0.8
+n4o5p6q	1.0966	44.2	discard	window pattern SSSL to all short (S)
+o5p6q7r	1.0949	44.2	keep	LR floor 0% to 5% (FINAL_LR_FRAC=0.05)
+p6q7r8s	1.0961	44.2	discard	LR floor 5% to 10% (FINAL_LR_FRAC=0.10)
+q7r8s9t	1.0945	44.3	keep	weight decay 0 to 0.01 (small regularization)
+r8s9t0u	1.0952	44.3	discard	embedding LR 0.6 to 0.8 (too aggressive)
+s9t0u1v	1.0940	44.3	keep	warmup ratio 0 to 0.05 (small warmup stabilizes early training)
+t0u1v2w	1.0948	44.3	discard	adam beta1 0.8 to 0.85 (marginal, not clearly better)
+u1v2w3x	1.0950	44.3	discard	matrix LR 0.04 to 0.03 (slower learning, net negative)

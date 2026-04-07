@@ -1,0 +1,2546 @@
+{
+  "task_01": {
+    "description": "Early stage: only baseline completed. Many good options available.",
+    "current_best_bpb": 1.098,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "L",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "SSSL",
+        "expected_bpb": null,
+        "why": "Sliding window is computationally cheaper, allows more training steps in fixed time budget"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer learning rate decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing, model keeps learning at end of training"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "More params = fewer training steps on A40, net negative"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers, model too small to learn well"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts \u2014 not enough time for smooth LR decay"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "More steps but noisier gradients, net negative"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive for tiny 3-head model"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim reduces attention quality"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Smaller MLP loses too much capacity"
+      }
+    ]
+  },
+  "task_02": {
+    "description": "After 3 experiments. SSSL kept, depth increase failed. Several good options remain.",
+    "current_best_bpb": 1.0961,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already tried depth increase (even with SSSL it's still worse)"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim hurts"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting already-proven improvement"
+      }
+    ]
+  },
+  "task_03": {
+    "description": "After 7 experiments. Mid-stage. Architecture and warmdown tuned. LR schedule is the key remaining lever.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing \u2014 best single discovery"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "Already failed \u2014 should read history"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed \u2014 should read history"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed \u2014 should read history"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.8,
+        "expected_bpb": 1.0961,
+        "why": "Marginal, does not improve over 0.7"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "MATRIX_LR",
+        "new_value": 0.05,
+        "expected_bpb": 1.0961,
+        "why": "Marginal worse"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "S",
+        "expected_bpb": 1.0966,
+        "why": "All-short slightly worse than SSSL"
+      }
+    ]
+  },
+  "task_04": {
+    "description": "After 11 experiments. Late-stage. Many options exhausted. LR schedule changes are the key lever.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing \u2014 the key remaining lever"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "Already failed twice"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.8,
+        "expected_bpb": 1.0961,
+        "why": "Marginal \u2014 does not improve"
+      },
+      {
+        "parameter": "MATRIX_LR",
+        "new_value": 0.05,
+        "expected_bpb": 1.0961,
+        "why": "Already tried \u2014 marginal worse"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already tried \u2014 loses capacity"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "S",
+        "expected_bpb": 1.0966,
+        "why": "Slightly worse than SSSL"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.1,
+        "expected_bpb": 1.0961,
+        "why": "Too high \u2014 10% LR floor overshoots"
+      }
+    ]
+  },
+  "task_05": {
+    "description": "After 15 experiments. Very late stage. Almost all options exhausted. This is the hardest task \u2014 need creative/novel ideas.",
+    "current_best_bpb": 1.0949,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": null,
+        "why": "Embedding LR hasn't been tuned \u2014 slight increase could help"
+      },
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup could stabilize early training"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Slightly higher beta1 for smoother updates"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.01,
+        "expected_bpb": null,
+        "why": "Small regularization might help generalization"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "Already failed multiple times \u2014 should read history"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.1,
+        "expected_bpb": 1.0961,
+        "why": "Already tried \u2014 too high"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.8,
+        "expected_bpb": 1.0961,
+        "why": "Already tried \u2014 marginal"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already tried \u2014 noisier gradients"
+      }
+    ],
+    "scoring_note": "For task_05, good proposals are anything novel that hasn't been tried AND doesn't repeat a known-bad direction. Bad proposals are anything that repeats a previously-failed experiment."
+  },
+  "task_06": {
+    "description": "Early stage: only baseline completed. Identical to task_01 \u2014 many good options available.",
+    "current_best_bpb": 1.098,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "L",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "SSSL",
+        "expected_bpb": null,
+        "why": "Sliding window is computationally cheaper, allows more training steps in fixed time budget"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer learning rate decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing, model keeps learning at end of training"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "More params = fewer training steps on A40, net negative"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers, model too small to learn well"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts \u2014 not enough time for smooth LR decay"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "More steps but noisier gradients, net negative"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive for tiny 3-head model"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim reduces attention quality"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Smaller MLP loses too much capacity"
+      }
+    ]
+  },
+  "task_07": {
+    "description": "Early stage with depth 8 failure recorded. Good: SSSL, warmdown 0.7, LR floor 0.05. Bad: depth 8 (repeat), depth 4, warmdown 0.3, batch half, GQA, HEAD_DIM 64, MLP 3.",
+    "current_best_bpb": 1.098,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "L",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "SSSL",
+        "expected_bpb": null,
+        "why": "Sliding window cheaper, more steps in budget"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "Already failed \u2014 repeating known-bad experiment"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim hurts"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      }
+    ]
+  },
+  "task_08": {
+    "description": "Budget GPU emphasis. Early stage with cost awareness. Good: SSSL, LR floor, warmdown 0.7. Bad: depth 8, depth 10, batch half, GQA.",
+    "current_best_bpb": 1.098,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "L",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "SSSL",
+        "expected_bpb": null,
+        "why": "Computationally cheaper, critical for budget GPU \u2014 more steps in fixed time"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor prevents over-annealing \u2014 high impact, zero compute cost"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay helps \u2014 free improvement"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.1017,
+        "why": "More params = fewer steps on budget GPU \u2014 already known bad"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 10,
+        "expected_bpb": 1.11,
+        "why": "Even more params, even worse on budget GPU"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients, no throughput gain"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive for this model size"
+      }
+    ]
+  },
+  "task_09": {
+    "description": "After 3 experiments. SSSL adopted. Good: warmdown 0.7, LR floor. Bad: depth 8 (with SSSL), depth 4, warmdown 0.3, revert SSSL, batch half, GQA, HEAD_DIM 64, MLP 3.",
+    "current_best_bpb": 1.0961,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing \u2014 best remaining lever"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Depth increase failed even with SSSL \u2014 already known bad"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven SSSL improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim hurts"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      }
+    ]
+  },
+  "task_10": {
+    "description": "After 4 experiments. Good: warmdown 0.7, LR floor. Bad: depth 8 (failed twice), depth 4, warmdown 0.3, revert SSSL, batch half, GQA, HEAD_DIM 64, MLP 3.",
+    "current_best_bpb": 1.0961,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Depth 8 failed twice \u2014 should recognize the pattern"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim hurts"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      }
+    ]
+  },
+  "task_11": {
+    "description": "After 5 experiments. Good: warmdown 0.7, LR floor. Bad: depth 8, 4, 10, warmdown 0.3, revert SSSL, batch half, GQA.",
+    "current_best_bpb": 1.0961,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 10,
+        "expected_bpb": 1.11,
+        "why": "Even more params, worse on budget GPU"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven SSSL improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      }
+    ]
+  },
+  "task_12": {
+    "description": "After 5 experiments (shuffled order). Same good/bad as task_11 \u2014 order of presentation shouldn't change the answer.",
+    "current_best_bpb": 1.0961,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 10,
+        "expected_bpb": 1.11,
+        "why": "Even more params, worse"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Shorter warmdown hurts"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      }
+    ]
+  },
+  "task_13": {
+    "description": "After 6 experiments. Good: warmdown 0.7, LR floor. Bad: warmdown 0.3 (repeat), depth 8, 4, revert SSSL, batch half, GQA.",
+    "current_best_bpb": 1.0961,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.5,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.7,
+        "expected_bpb": null,
+        "why": "Longer decay consistently helps"
+      },
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Prevents over-annealing"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already tried \u2014 shorter warmdown hurts (repeat failure)"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      }
+    ]
+  },
+  "task_14": {
+    "description": "After 7 experiments. Warmdown 0.7 kept. Good: LR floor 0.05 only. Bad: depth 8, 4, warmdown 0.3, warmdown 0.5 (revert), revert SSSL, batch half, GQA, HEAD_DIM 64, MLP 3.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor prevents over-annealing \u2014 the key remaining lever"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed \u2014 shorter warmdown hurts"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": 1.0961,
+        "why": "Reverting warmdown improvement already captured"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven SSSL improvement"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim hurts"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      }
+    ]
+  },
+  "task_15": {
+    "description": "After 8 experiments. Good: LR floor. Bad: batch half (repeat), batch 32K, depth 8, 4, warmdown 0.3, revert SSSL, GQA, HEAD_DIM 64, MLP 3.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor prevents over-annealing \u2014 the last clearly good lever"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Batch half already tried \u2014 noisier gradients (repeat failure)"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 32768,
+        "expected_bpb": 1.102,
+        "why": "Even smaller batch \u2014 even noisier"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA too aggressive"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Smaller head dim hurts"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Loses capacity"
+      }
+    ]
+  },
+  "task_16": {
+    "description": "After 9 experiments. Good: LR floor, MATRIX_LR 0.05 (untried), MLP 3 (untried here). Bad: GQA (repeat), depth 8, 4, batch half, warmdown 0.3, revert SSSL.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor prevents over-annealing \u2014 proven direction, not yet tried"
+      },
+      {
+        "parameter": "MATRIX_LR",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small MATRIX_LR increase hasn't been tried in this run \u2014 worth exploring"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": null,
+        "why": "MLP reduction untried in this configuration \u2014 could free compute for more steps"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already tried and failed (repeat)"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Batch half already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      }
+    ]
+  },
+  "task_17": {
+    "description": "After 10 experiments. Good: LR floor, EMBEDDING_LR 0.8, WARMUP_RATIO 0.05, ADAM_BETAS [0.85,0.95], WEIGHT_DECAY 0.01. Bad: HEAD_DIM 64, GQA, depth 8, 4, batch half, warmdown 0.3, revert SSSL.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor \u2014 the most impactful remaining lever"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": null,
+        "why": "Embedding LR not yet tuned \u2014 reasonable direction"
+      },
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup could stabilize early training"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Slightly higher beta1 for smoother updates"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.01,
+        "expected_bpb": null,
+        "why": "Small regularization might help generalization"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed \u2014 smaller head dim hurts"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Too few layers"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Noisier gradients \u2014 already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      }
+    ]
+  },
+  "task_18": {
+    "description": "Late stage (11 experiments). Good: FINAL_LR_FRAC 0.05, WARMUP_RATIO 0.05, WEIGHT_DECAY 0.1. Bad: all previously-failed directions.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor \u2014 the primary remaining lever"
+      },
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup could stabilize early training \u2014 not yet tried"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.1,
+        "expected_bpb": null,
+        "why": "Regularization might help generalization at late stage"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      }
+    ]
+  },
+  "task_19": {
+    "description": "Late stage (12 experiments). Good: FINAL_LR_FRAC 0.05, WARMUP_RATIO 0.05, WEIGHT_DECAY 0.1. Bad: all previously-failed directions.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor \u2014 the primary remaining lever"
+      },
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup hasn't been tried \u2014 worth testing"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.1,
+        "expected_bpb": null,
+        "why": "Regularization at late stage"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      }
+    ]
+  },
+  "task_20": {
+    "description": "Late stage (13 experiments). Good: FINAL_LR_FRAC 0.05, WARMUP_RATIO 0.05, WEIGHT_DECAY 0.1. Bad: all previously-failed directions.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor \u2014 not yet adopted, still the best lever"
+      },
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup \u2014 novel direction"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.1,
+        "expected_bpb": null,
+        "why": "Regularization \u2014 novel direction"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      }
+    ]
+  },
+  "task_21": {
+    "description": "Late stage (14 experiments). Good: FINAL_LR_FRAC 0.05, WARMUP_RATIO 0.05, WEIGHT_DECAY 0.1. Bad: all previously-failed directions.",
+    "current_best_bpb": 1.096,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.0,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "FINAL_LR_FRAC",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "LR floor \u2014 the most critical outstanding lever"
+      },
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup \u2014 novel direction at late stage"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.1,
+        "expected_bpb": null,
+        "why": "Regularization \u2014 novel direction"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      }
+    ]
+  },
+  "task_22": {
+    "description": "Very late (16 experiments, LR floor done). Good: WARMUP_RATIO, WEIGHT_DECAY, ADAM_BETAS, EMBEDDING_LR, SCALAR_LR, ASPECT_RATIO. Bad: all 16 failed experiments.",
+    "current_best_bpb": 1.0949,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup not yet tried \u2014 could stabilize early training"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.01,
+        "expected_bpb": null,
+        "why": "Small regularization not yet tried"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Optimizer tuning not yet tried"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": null,
+        "why": "Embedding LR scaling not yet tried"
+      },
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times across 16 experiments"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_23": {
+    "description": "Very late (16 experiments, LR floor done). Same good/bad as task_22 \u2014 consistent across presentation order.",
+    "current_best_bpb": 1.0949,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup not yet tried"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.01,
+        "expected_bpb": null,
+        "why": "Small regularization not yet tried"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Optimizer tuning not yet tried"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": null,
+        "why": "Embedding LR scaling not yet tried"
+      },
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_24": {
+    "description": "Very late (16 experiments, LR floor done). Same good/bad as task_22-23.",
+    "current_best_bpb": 1.0949,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup not yet tried"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.01,
+        "expected_bpb": null,
+        "why": "Small regularization not yet tried"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Optimizer tuning not yet tried"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": null,
+        "why": "Embedding LR scaling not yet tried"
+      },
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_25": {
+    "description": "Very late (16 experiments, LR floor done). Same good/bad as task_22-24.",
+    "current_best_bpb": 1.0949,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup not yet tried"
+      },
+      {
+        "parameter": "WEIGHT_DECAY",
+        "new_value": 0.01,
+        "expected_bpb": null,
+        "why": "Small regularization not yet tried"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Optimizer tuning not yet tried"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": null,
+        "why": "Embedding LR scaling not yet tried"
+      },
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_26": {
+    "description": "Very late (16+ experiments). best_bpb 1.0945, WEIGHT_DECAY=0.01 adopted. Good: WARMUP_RATIO 0.05, SCALAR_LR change, UNEMBEDDING_LR change, ASPECT_RATIO change. Bad: all previous failures + EMBEDDING_LR 0.8 (exp 18 failed).",
+    "current_best_bpb": 1.0945,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4,
+      "WEIGHT_DECAY": 0.01
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup not yet tried \u2014 could stabilize early training"
+      },
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned in this configuration"
+      },
+      {
+        "parameter": "UNEMBEDDING_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Unembedding LR not yet explored"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": 1.096,
+        "why": "Synthetic experiment 18 showed EMBEDDING_LR 0.8 failed \u2014 already tried"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_27": {
+    "description": "Very late (16+ experiments). best_bpb 1.0945. Good: WARMUP_RATIO 0.05, SCALAR_LR, UNEMBEDDING_LR, ASPECT_RATIO. Bad: same as task_26 + EMBEDDING_LR 0.8 just confirmed failed.",
+    "current_best_bpb": 1.0945,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4,
+      "WEIGHT_DECAY": 0.01
+    },
+    "good_proposals": [
+      {
+        "parameter": "WARMUP_RATIO",
+        "new_value": 0.05,
+        "expected_bpb": null,
+        "why": "Small warmup not yet tried \u2014 worth exploring"
+      },
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned"
+      },
+      {
+        "parameter": "UNEMBEDDING_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Unembedding LR not yet explored"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": 1.096,
+        "why": "EMBEDDING_LR 0.8 just failed \u2014 do not repeat"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_28": {
+    "description": "Very late. best_bpb 1.0940, WARMUP_RATIO=0.05 now adopted. Good: SCALAR_LR, UNEMBEDDING_LR, ASPECT_RATIO, ADAM_BETAS. Bad: all previous + EMBEDDING_LR failed.",
+    "current_best_bpb": 1.094,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4,
+      "WEIGHT_DECAY": 0.01,
+      "WARMUP_RATIO": 0.05
+    },
+    "good_proposals": [
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned in current configuration"
+      },
+      {
+        "parameter": "UNEMBEDDING_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Unembedding LR unexplored"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio change not yet tried"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": null,
+        "why": "Optimizer betas not yet tuned in current config"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": 1.096,
+        "why": "EMBEDDING_LR 0.8 already failed \u2014 do not repeat"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_29": {
+    "description": "Very late. best_bpb 1.0940. Good: SCALAR_LR, UNEMBEDDING_LR, ASPECT_RATIO. Bad: all previous + ADAM_BETAS (0.85,0.95) failed.",
+    "current_best_bpb": 1.094,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4,
+      "WEIGHT_DECAY": 0.01,
+      "WARMUP_RATIO": 0.05
+    },
+    "good_proposals": [
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR not yet tuned \u2014 worth exploring"
+      },
+      {
+        "parameter": "UNEMBEDDING_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Unembedding LR not yet explored"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": 1.0945,
+        "why": "ADAM_BETAS (0.85,0.95) just failed \u2014 do not repeat"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": 1.096,
+        "why": "EMBEDDING_LR 0.8 already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  },
+  "task_30": {
+    "description": "Very late. best_bpb 1.0940. Good: SCALAR_LR, UNEMBEDDING_LR, ASPECT_RATIO only. Bad: everything else including MATRIX_LR 0.03 failed.",
+    "current_best_bpb": 1.094,
+    "current_state": {
+      "DEPTH": 6,
+      "WINDOW_PATTERN": "SSSL",
+      "WARMDOWN_RATIO": 0.7,
+      "FINAL_LR_FRAC": 0.05,
+      "TOTAL_BATCH_SIZE": 131072,
+      "MATRIX_LR": 0.04,
+      "HEAD_DIM": 128,
+      "n_kv_head": 6,
+      "MLP_RATIO": 4,
+      "WEIGHT_DECAY": 0.01,
+      "WARMUP_RATIO": 0.05
+    },
+    "good_proposals": [
+      {
+        "parameter": "SCALAR_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Scalar LR the only clear unexplored direction remaining"
+      },
+      {
+        "parameter": "UNEMBEDDING_LR",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Unembedding LR not yet explored"
+      },
+      {
+        "parameter": "ASPECT_RATIO",
+        "new_value": 0.5,
+        "expected_bpb": null,
+        "why": "Aspect ratio not yet tried"
+      }
+    ],
+    "bad_proposals": [
+      {
+        "parameter": "MATRIX_LR",
+        "new_value": 0.03,
+        "expected_bpb": 1.095,
+        "why": "MATRIX_LR 0.03 just failed \u2014 do not repeat"
+      },
+      {
+        "parameter": "ADAM_BETAS",
+        "new_value": [
+          0.85,
+          0.95
+        ],
+        "expected_bpb": 1.0945,
+        "why": "ADAM_BETAS already failed"
+      },
+      {
+        "parameter": "EMBEDDING_LR",
+        "new_value": 0.8,
+        "expected_bpb": 1.096,
+        "why": "EMBEDDING_LR 0.8 already failed"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 8,
+        "expected_bpb": 1.099,
+        "why": "Already failed multiple times"
+      },
+      {
+        "parameter": "DEPTH",
+        "new_value": 4,
+        "expected_bpb": 1.1549,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WARMDOWN_RATIO",
+        "new_value": 0.3,
+        "expected_bpb": 1.0994,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "TOTAL_BATCH_SIZE",
+        "new_value": 65536,
+        "expected_bpb": 1.1007,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "n_kv_head",
+        "new_value": 1,
+        "expected_bpb": 1.1078,
+        "why": "GQA already failed"
+      },
+      {
+        "parameter": "HEAD_DIM",
+        "new_value": 64,
+        "expected_bpb": 1.1032,
+        "why": "Already failed"
+      },
+      {
+        "parameter": "WINDOW_PATTERN",
+        "new_value": "L",
+        "expected_bpb": 1.098,
+        "why": "Reverting proven improvement"
+      },
+      {
+        "parameter": "MLP_RATIO",
+        "new_value": 3,
+        "expected_bpb": 1.1,
+        "why": "Already failed"
+      }
+    ]
+  }
+}

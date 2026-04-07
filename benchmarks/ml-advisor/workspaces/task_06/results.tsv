@@ -1,0 +1,2 @@
+commit	val_bpb	memory_gb	status	description
+a1b2c3d	1.0980	44.0	keep	baseline: depth=6 full attention batch=131K warmdown=0.5 LR_floor=0

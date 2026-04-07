@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Meta-Agent Results — ml-advisor</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#0d1117;
+    color:#e6edf3;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.6;
+    padding:40px 24px;
+  }
+  .container{max-width:860px;margin:0 auto;}
+  .header{margin-bottom:40px;}
+  .header h1{
+    font-size:28px;font-weight:700;
+    background:linear-gradient(90deg,#00ff88,#58a6ff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:8px;
+  }
+  .header p{color:#8b949e;font-size:14px;}
+  .badge{
+    display:inline-block;padding:3px 10px;border-radius:20px;
+    font-size:12px;font-weight:600;margin-left:10px;vertical-align:middle;
+    background:#00ff8822;color:#00ff88;border:1px solid #00ff8844;
+  }
+  .section{margin-bottom:48px;}
+  .section-title{
+    font-size:14px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.1em;color:#8b949e;margin-bottom:16px;
+    padding-bottom:8px;border-bottom:1px solid #30363d;
+  }
+  .chart-wrap{
+    border-radius:10px;overflow:hidden;
+    border:1px solid #30363d;
+  }
+  .footer{
+    margin-top:48px;padding-top:24px;border-top:1px solid #30363d;
+    color:#8b949e;font-size:12px;text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Meta-Agent Benchmark Results
+      <span class="badge">ml-advisor</span>
+    </h1>
+    <p>Evolutionary prompt optimisation · best run: <strong style="color:#ffd700">evo_008</strong>
+       (95.0% accuracy, <span style="color:#00ff88">+15.0pp</span> vs baseline)</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Summary</div>
+    
+<div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:40px;">
+  
+    <div style="background:#21262d;border:1px solid #30363d;border-radius:10px;
+                padding:20px 24px;flex:1;min-width:140px;">
+      <div style="color:#8b949e;font-size:12px;text-transform:uppercase;
+                  letter-spacing:.08em;margin-bottom:8px;">Baseline Accuracy</div>
+      <div style="color:#e6edf3;font-size:28px;font-weight:700;line-height:1;">80.0%</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;">24/30 tasks</div>
+    </div>
+  
+    <div style="background:#21262d;border:1px solid #30363d;border-radius:10px;
+                padding:20px 24px;flex:1;min-width:140px;">
+      <div style="color:#8b949e;font-size:12px;text-transform:uppercase;
+                  letter-spacing:.08em;margin-bottom:8px;">Best Accuracy</div>
+      <div style="color:#ffd700;font-size:28px;font-weight:700;line-height:1;">95.0%</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;">19/30 tasks</div>
+    </div>
+  
+    <div style="background:#21262d;border:1px solid #30363d;border-radius:10px;
+                padding:20px 24px;flex:1;min-width:140px;">
+      <div style="color:#8b949e;font-size:12px;text-transform:uppercase;
+                  letter-spacing:.08em;margin-bottom:8px;">Improvement</div>
+      <div style="color:#00ff88;font-size:28px;font-weight:700;line-height:1;">+15.0pp</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;">vs baseline</div>
+    </div>
+  
+    <div style="background:#21262d;border:1px solid #30363d;border-radius:10px;
+                padding:20px 24px;flex:1;min-width:140px;">
+      <div style="color:#8b949e;font-size:12px;text-transform:uppercase;
+                  letter-spacing:.08em;margin-bottom:8px;">Total Cost</div>
+      <div style="color:#e6edf3;font-size:28px;font-weight:700;line-height:1;">$8.64</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;">6 runs</div>
+    </div>
+  
+    <div style="background:#21262d;border:1px solid #30363d;border-radius:10px;
+                padding:20px 24px;flex:1;min-width:140px;">
+      <div style="color:#8b949e;font-size:12px;text-transform:uppercase;
+                  letter-spacing:.08em;margin-bottom:8px;">Evolution Rounds</div>
+      <div style="color:#e6edf3;font-size:28px;font-weight:700;line-height:1;">5</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;">after baseline</div>
+    </div>
+</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Accuracy over Iterations</div>
+    <div class="chart-wrap">
+      
+<svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:760px;display:block;margin:0 auto;">
+  <rect width="760" height="340" fill="#161b22" rx="10"/>
+  <line x1="64" y1="284.00" x2="736" y2="284.00" stroke="#30363d" stroke-width="1"/><text x="56" y="288.00" text-anchor="end" fill="#8b949e" font-size="11">70%</text><line x1="64" y1="200.00" x2="736" y2="200.00" stroke="#30363d" stroke-width="1"/><text x="56" y="204.00" text-anchor="end" fill="#8b949e" font-size="11">80%</text><line x1="64" y1="116.00" x2="736" y2="116.00" stroke="#30363d" stroke-width="1"/><text x="56" y="120.00" text-anchor="end" fill="#8b949e" font-size="11">90%</text><line x1="64" y1="32.00" x2="736" y2="32.00" stroke="#30363d" stroke-width="1"/><text x="56" y="36.00" text-anchor="end" fill="#8b949e" font-size="11">100%</text>
+  <line x1="64" y1="200.00" x2="736" y2="200.00" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="6,4"/><text x="738" y="204.00" fill="#8b949e" font-size="10">baseline</text>
+  <polyline points="64.00,200.00 198.40,200.00 198.40,158.00" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linejoin="round"/><polyline points="198.40,158.00 332.80,158.00 332.80,158.00" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linejoin="round"/><polyline points="332.80,158.00 467.20,158.00 467.20,158.00" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linejoin="round"/><polyline points="467.20,158.00 601.60,158.00 601.60,200.00" fill="none" stroke="#ff4444" stroke-width="2.5" stroke-linejoin="round"/><polyline points="601.60,200.00 736.00,200.00 736.00,74.00" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="64.00" cy="200.00" r="4" fill="#00ff88" stroke="#0d1117" stroke-width="2"><title>baseline: 80.00%</title></circle><text x="64.00" y="190.00" text-anchor="middle" fill="#00ff88" font-size="11" font-weight="600">80.00%</text><circle cx="198.40" cy="158.00" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="2"><title>evo_001: 85.00%</title></circle><text x="198.40" y="148.00" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">85.00%</text><circle cx="332.80" cy="158.00" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="2"><title>evo_004: 85.00%</title></circle><text x="332.80" y="148.00" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">85.00%</text><circle cx="467.20" cy="158.00" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="2"><title>evo_005: 85.00%</title></circle><text x="467.20" y="148.00" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">85.00%</text><circle cx="601.60" cy="200.00" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="2"><title>evo_007: 80.00%</title></circle><text x="601.60" y="190.00" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">80.00%</text><circle cx="736.00" cy="74.00" r="6" fill="#ffd700" stroke="#0d1117" stroke-width="2"><title>evo_008: 95.00%</title></circle><text x="736.00" y="64.00" text-anchor="middle" fill="#ffd700" font-size="11" font-weight="600">95.00%</text>
+  <text transform="rotate(-35, 64.00, 298)" x="64.00" y="298" text-anchor="end" fill="#8b949e" font-size="11">baseline</text><text transform="rotate(-35, 198.40, 298)" x="198.40" y="298" text-anchor="end" fill="#8b949e" font-size="11">evo_001</text><text transform="rotate(-35, 332.80, 298)" x="332.80" y="298" text-anchor="end" fill="#8b949e" font-size="11">evo_004</text><text transform="rotate(-35, 467.20, 298)" x="467.20" y="298" text-anchor="end" fill="#8b949e" font-size="11">evo_005</text><text transform="rotate(-35, 601.60, 298)" x="601.60" y="298" text-anchor="end" fill="#8b949e" font-size="11">evo_007</text><text transform="rotate(-35, 736.00, 298)" x="736.00" y="298" text-anchor="end" fill="#8b949e" font-size="11">evo_008</text>
+  <!-- axis lines -->
+  <line x1="64" y1="32" x2="64" y2="284"
+        stroke="#30363d" stroke-width="1.5"/>
+  <line x1="64" y1="284" x2="736" y2="284"
+        stroke="#30363d" stroke-width="1.5"/>
+</svg>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Cost per Iteration (USD)</div>
+    <div class="chart-wrap">
+      
+<svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:760px;display:block;margin:0 auto;">
+  <rect width="760" height="300" fill="#161b22" rx="10"/>
+  <line x1="64" y1="244.00" x2="736" y2="244.00" stroke="#30363d" stroke-width="1"/><text x="56" y="248.00" text-anchor="end" fill="#8b949e" font-size="11">$0.00</text><line x1="64" y1="201.60" x2="736" y2="201.60" stroke="#30363d" stroke-width="1"/><text x="56" y="205.60" text-anchor="end" fill="#8b949e" font-size="11">$0.46</text><line x1="64" y1="159.20" x2="736" y2="159.20" stroke="#30363d" stroke-width="1"/><text x="56" y="163.20" text-anchor="end" fill="#8b949e" font-size="11">$0.92</text><line x1="64" y1="116.80" x2="736" y2="116.80" stroke="#30363d" stroke-width="1"/><text x="56" y="120.80" text-anchor="end" fill="#8b949e" font-size="11">$1.38</text><line x1="64" y1="74.40" x2="736" y2="74.40" stroke="#30363d" stroke-width="1"/><text x="56" y="78.40" text-anchor="end" fill="#8b949e" font-size="11">$1.84</text><line x1="64" y1="32.00" x2="736" y2="32.00" stroke="#30363d" stroke-width="1"/><text x="56" y="36.00" text-anchor="end" fill="#8b949e" font-size="11">$2.30</text>
+  <rect x="80.80" y="69.45" width="78.40" height="174.55" fill="#58a6ff" rx="3" opacity="0.85"><title>baseline: $1.8937</title></rect><text x="120.00" y="63.45" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">$1.89</text><rect x="192.80" y="118.61" width="78.40" height="125.39" fill="#58a6ff" rx="3" opacity="0.85"><title>evo_001: $1.3604</title></rect><text x="232.00" y="112.61" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">$1.36</text><rect x="304.80" y="129.01" width="78.40" height="114.99" fill="#58a6ff" rx="3" opacity="0.85"><title>evo_004: $1.2475</title></rect><text x="344.00" y="123.01" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">$1.25</text><rect x="416.80" y="111.21" width="78.40" height="132.79" fill="#58a6ff" rx="3" opacity="0.85"><title>evo_005: $1.4407</title></rect><text x="456.00" y="105.21" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">$1.44</text><rect x="528.80" y="120.92" width="78.40" height="123.08" fill="#58a6ff" rx="3" opacity="0.85"><title>evo_007: $1.3353</title></rect><text x="568.00" y="114.92" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">$1.34</text><rect x="640.80" y="118.33" width="78.40" height="125.67" fill="#58a6ff" rx="3" opacity="0.85"><title>evo_008: $1.3634</title></rect><text x="680.00" y="112.33" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">$1.36</text>
+  <text transform="rotate(-35, 120.00, 258)" x="120.00" y="258" text-anchor="end" fill="#8b949e" font-size="11">baseline</text><text transform="rotate(-35, 232.00, 258)" x="232.00" y="258" text-anchor="end" fill="#8b949e" font-size="11">evo_001</text><text transform="rotate(-35, 344.00, 258)" x="344.00" y="258" text-anchor="end" fill="#8b949e" font-size="11">evo_004</text><text transform="rotate(-35, 456.00, 258)" x="456.00" y="258" text-anchor="end" fill="#8b949e" font-size="11">evo_005</text><text transform="rotate(-35, 568.00, 258)" x="568.00" y="258" text-anchor="end" fill="#8b949e" font-size="11">evo_007</text><text transform="rotate(-35, 680.00, 258)" x="680.00" y="258" text-anchor="end" fill="#8b949e" font-size="11">evo_008</text>
+  <line x1="64" y1="32" x2="64" y2="244"
+        stroke="#30363d" stroke-width="1.5"/>
+  <line x1="64" y1="244" x2="736" y2="244"
+        stroke="#30363d" stroke-width="1.5"/>
+</svg>
+    </div>
+  </div>
+
+  <div class="footer">
+    Generated by generate_charts.py &mdash; data from ml-advisor/history.json
+  </div>
+
+</div>
+</body>
+</html>
