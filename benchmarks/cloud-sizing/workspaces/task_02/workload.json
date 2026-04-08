@@ -1,0 +1,17 @@
+{
+  "service_type": "ml_inference",
+  "requests_per_second": 200,
+  "p99_latency_ms": 100,
+  "data_size_gb": null,
+  "compute_type": "gpu",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["nvidia_gpu", "cuda", "minimum_8gb_vram"],
+  "model": "yolov8_medium",
+  "model_size_mb": 52,
+  "gpu_memory_required_gb": 8,
+  "inference_latency_ms": 20,
+  "framework": "pytorch",
+  "batch_size": 4
+}

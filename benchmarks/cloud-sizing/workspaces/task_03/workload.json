@@ -1,0 +1,17 @@
+{
+  "service_type": "batch",
+  "requests_per_second": null,
+  "p99_latency_ms": null,
+  "data_size_gb": 10000,
+  "compute_type": "memory",
+  "availability_sla": "99.0%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["minimum_96gb_ram", "high_core_count", "spot_eligible"],
+  "processing_window_hours": 4,
+  "framework": "apache_spark_pyspark",
+  "workload_pattern": "nightly_batch",
+  "storage_backend": "gcs",
+  "min_memory_gb": 96,
+  "min_vcpus": 16
+}

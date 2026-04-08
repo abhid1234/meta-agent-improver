@@ -1,0 +1,20 @@
+{
+  "service_type": "startup",
+  "requests_per_second": 50,
+  "p99_latency_ms": 500,
+  "data_size_gb": 20,
+  "compute_type": "balanced",
+  "availability_sla": "99.5%",
+  "budget_monthly_usd": 100,
+  "region": "us-central1",
+  "special_requirements": ["cost_optimized", "minimal_footprint"],
+  "stack": "nodejs_express",
+  "total_stack_budget_usd": 500,
+  "compute_budget_usd": 100,
+  "current_traffic_rps": 10,
+  "peak_traffic_rps": 50,
+  "min_memory_gb": 2,
+  "team_size": 2,
+  "database": "cloud_sql_basic",
+  "cache": "memorystore_basic_1gb"
+}

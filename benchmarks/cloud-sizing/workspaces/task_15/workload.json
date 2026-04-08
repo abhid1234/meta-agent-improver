@@ -1,0 +1,22 @@
+{
+  "service_type": "compliance",
+  "requests_per_second": 500,
+  "p99_latency_ms": 200,
+  "data_size_gb": null,
+  "compute_type": "cpu",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["hipaa", "cmek", "vpc_service_controls", "shielded_vm", "private_ip_only", "data_residency_us_central1"],
+  "compliance_frameworks": ["hipaa"],
+  "data_classification": "phi",
+  "baa_signed": true,
+  "encryption": "cmek",
+  "network": "vpc_sc_perimeter",
+  "min_instances": 3,
+  "min_memory_gb": 8,
+  "min_vcpus": 4,
+  "preferred_family": "n2",
+  "shielded_vm_required": true,
+  "audit_logging": "cloud_audit_logs"
+}

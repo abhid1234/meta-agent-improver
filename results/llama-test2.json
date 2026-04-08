@@ -1,0 +1,11 @@
+{
+  "name": "llama-test2",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "n_tasks": 1,
+  "n_passed": 1,
+  "pass_rate": 1.0,
+  "tasks_passed": [
+    "task_14"
+  ],
+  "tasks_failed": []
+}

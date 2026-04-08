@@ -1,0 +1,20 @@
+{
+  "service_type": "cicd",
+  "requests_per_second": null,
+  "p99_latency_ms": null,
+  "data_size_gb": null,
+  "compute_type": "cpu",
+  "availability_sla": "99.5%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["high_cpu_frequency", "spot_eligible", "ephemeral"],
+  "concurrent_builds": 20,
+  "build_type": "jvm_docker",
+  "build_duration_minutes": 10,
+  "memory_per_build_gb": 16,
+  "local_ssd_preferred": true,
+  "workload_pattern": "bursty_business_hours",
+  "framework": "maven_gradle",
+  "min_vcpus": 16,
+  "min_memory_gb": 32
+}

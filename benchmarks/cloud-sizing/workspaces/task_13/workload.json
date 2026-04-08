@@ -1,0 +1,21 @@
+{
+  "service_type": "multi_region",
+  "requests_per_second": 10000,
+  "p99_latency_ms": 100,
+  "data_size_gb": null,
+  "compute_type": "balanced",
+  "availability_sla": "99.99%",
+  "budget_monthly_usd": 5000,
+  "region": "us-central1",
+  "special_requirements": ["multi_region", "cloud_cdn", "gclb_anycast", "regional_gke"],
+  "regions": ["us-central1", "europe-west1", "asia-southeast1"],
+  "dynamic_rps_per_region": 2000,
+  "cdn_cache_hit_rate": 0.80,
+  "min_nodes_per_region": 3,
+  "max_nodes_per_region": 12,
+  "pods_per_node": 8,
+  "pod_cpu_vcpu": 1,
+  "pod_memory_gb": 2,
+  "platform": "gke_regional_multiregion",
+  "preferred_families": ["n2", "e2"]
+}

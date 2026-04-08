@@ -1,0 +1,41 @@
+{
+  "name": "mistral-baseline",
+  "model": "mistralai/mistral-small-3.1-24b-instruct",
+  "n_tasks": 30,
+  "n_passed": 26,
+  "pass_rate": 0.8667,
+  "tasks_passed": [
+    "task_01",
+    "task_02",
+    "task_03",
+    "task_04",
+    "task_06",
+    "task_07",
+    "task_09",
+    "task_10",
+    "task_11",
+    "task_12",
+    "task_13",
+    "task_14",
+    "task_15",
+    "task_16",
+    "task_17",
+    "task_20",
+    "task_21",
+    "task_22",
+    "task_23",
+    "task_24",
+    "task_25",
+    "task_26",
+    "task_27",
+    "task_28",
+    "task_29",
+    "task_30"
+  ],
+  "tasks_failed": [
+    "task_05",
+    "task_08",
+    "task_18",
+    "task_19"
+  ]
+}

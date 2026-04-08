@@ -21,7 +21,11 @@ from pathlib import Path
 def normalize_value(val):
     """Normalize values for comparison."""
     if isinstance(val, str):
-        return val.strip().upper()
+        # Try to parse as number first
+        try:
+            return float(val)
+        except ValueError:
+            return val.strip().upper()
     if isinstance(val, list):
         return tuple(val)
     if isinstance(val, (int, float)):

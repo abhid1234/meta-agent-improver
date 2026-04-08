@@ -1,0 +1,20 @@
+{
+  "service_type": "gpu_training",
+  "requests_per_second": null,
+  "p99_latency_ms": null,
+  "data_size_gb": null,
+  "compute_type": "gpu",
+  "availability_sla": "99.5%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["nvidia_a100_80gb", "nvlink", "high_bandwidth_networking", "spot_eligible"],
+  "num_gpus_required": 4,
+  "gpu_memory_gb": 80,
+  "model_sizes": ["7b", "13b"],
+  "framework": "pytorch_fsdp",
+  "training_duration_hours": 24,
+  "inter_node_bandwidth_gbps": 400,
+  "cpu_per_gpu": 12,
+  "platform": "gke_gpu_nodepool",
+  "checkpoint_backend": "gcs"
+}

@@ -1,0 +1,15 @@
+{
+  "service_type": "web_api",
+  "requests_per_second": 50,
+  "p99_latency_ms": 200,
+  "data_size_gb": 2,
+  "compute_type": "cpu",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": [],
+  "concurrency": "medium",
+  "workload_pattern": "bursty_business_hours",
+  "framework": "django_gunicorn",
+  "workers": 4
+}

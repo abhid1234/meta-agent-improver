@@ -1,0 +1,22 @@
+{
+  "service_type": "gaming",
+  "requests_per_second": null,
+  "p99_latency_ms": 50,
+  "data_size_gb": null,
+  "compute_type": "cpu",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["low_latency_cpu", "spot_eligible", "agones_gke", "high_packet_rate"],
+  "concurrent_players": 10000,
+  "players_per_match": 100,
+  "game_server_cpu_vcpu": 1,
+  "game_server_memory_gb": 2,
+  "tick_rate_hz": 60,
+  "min_nodes": 4,
+  "target_pods_per_node": 18,
+  "spot_percentage": 50,
+  "scale_time_minutes": 5,
+  "platform": "gke_agones",
+  "preferred_families": ["c3", "c2"]
+}

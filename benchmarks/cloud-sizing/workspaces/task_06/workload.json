@@ -1,0 +1,20 @@
+{
+  "service_type": "microservices",
+  "requests_per_second": 500,
+  "p99_latency_ms": 200,
+  "data_size_gb": null,
+  "compute_type": "balanced",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["gke", "hpa_autoscaling", "multi_tenant"],
+  "num_services": 15,
+  "min_nodes": 3,
+  "max_nodes": 6,
+  "total_cpu_requests_vcpus": 18,
+  "total_memory_requests_gb": 45,
+  "avg_pod_cpu_request": 0.75,
+  "avg_pod_memory_request_gb": 1.5,
+  "daemonset_overhead_per_node": "0.5_vcpu_1gb",
+  "platform": "gke_standard"
+}

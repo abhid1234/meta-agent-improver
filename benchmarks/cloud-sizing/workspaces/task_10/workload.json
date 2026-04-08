@@ -1,0 +1,23 @@
+{
+  "service_type": "log_pipeline",
+  "requests_per_second": 1000000,
+  "p99_latency_ms": null,
+  "data_size_gb": 5000,
+  "compute_type": "memory",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["local_ssd", "high_network_throughput", "statefulset"],
+  "technology": "kafka_elasticsearch",
+  "kafka_brokers": 6,
+  "kafka_replication_factor": 3,
+  "events_per_second": 1000000,
+  "avg_event_size_kb": 1,
+  "kafka_page_cache_gb": 32,
+  "kafka_jvm_heap_gb": 8,
+  "min_memory_per_broker_gb": 48,
+  "network_throughput_per_broker_mbs": 500,
+  "retention_hours": 24,
+  "platform": "gke_statefulset",
+  "num_nodes": 6
+}

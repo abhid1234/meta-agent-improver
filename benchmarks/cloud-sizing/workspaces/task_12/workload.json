@@ -1,0 +1,23 @@
+{
+  "service_type": "migration",
+  "requests_per_second": null,
+  "p99_latency_ms": null,
+  "data_size_gb": null,
+  "compute_type": "balanced",
+  "availability_sla": "99.9%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["committed_use_discounts", "right_sizing", "windows_licensing"],
+  "num_servers_to_migrate": 100,
+  "application_tier_servers": 60,
+  "onprem_cores_per_server": 36,
+  "onprem_ram_per_server_gb": 128,
+  "avg_cpu_utilization_pct": 25,
+  "peak_cpu_utilization_pct": 65,
+  "avg_memory_utilization_pct": 35,
+  "cud_commitment_years": 1,
+  "spot_eligible": false,
+  "target_cpu_utilization_pct": 55,
+  "preferred_family": "n2",
+  "os_mix": ["windows_server_2019", "rhel8"]
+}

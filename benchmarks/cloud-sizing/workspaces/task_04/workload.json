@@ -1,0 +1,17 @@
+{
+  "service_type": "cache",
+  "requests_per_second": 50000,
+  "p99_latency_ms": 1,
+  "data_size_gb": 40,
+  "compute_type": "memory",
+  "availability_sla": "99.99%",
+  "budget_monthly_usd": null,
+  "region": "us-central1",
+  "special_requirements": ["local_ssd", "minimum_128gb_ram", "high_network_bandwidth"],
+  "technology": "redis_7",
+  "read_write_ratio": "70_30",
+  "network_throughput_gbps": 2,
+  "aof_persistence": true,
+  "numa_sensitive": true,
+  "min_memory_gb": 128
+}

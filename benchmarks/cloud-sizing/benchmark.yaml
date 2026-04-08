@@ -1,0 +1,183 @@
+name: cloud-sizing
+description: "Cloud Infrastructure Sizing Advisor — propose the optimal GCP machine type and configuration given workload requirements"
+fast_tasks:
+  - task_01
+  - task_02
+  - task_03
+  - task_04
+  - task_05
+  - task_06
+  - task_07
+  - task_08
+  - task_09
+  - task_10
+tasks:
+  - name: task_01
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. Propose the optimal Google Cloud machine type for
+      this workload. Write your proposal to proposal.json with fields: machine_type, num_instances,
+      rationale. Choose the most cost-effective machine type that meets the performance requirements.
+      Consider vCPU count, memory, and whether the workload is CPU-bound or memory-bound.
+    workspace: ./workspaces/task_01
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_02
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This workload requires GPU acceleration. Propose
+      the optimal Google Cloud machine type with GPU configuration. Write your proposal to
+      proposal.json with fields: machine_type, num_instances, rationale. Consider the GPU memory
+      requirements, inference throughput, and latency targets.
+    workspace: ./workspaces/task_02
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_03
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a batch processing workload with a strict
+      time window. Propose the optimal Google Cloud machine type. Write your proposal to
+      proposal.json with fields: machine_type, num_instances, rationale. Prioritize throughput
+      over latency — this is not a real-time workload.
+    workspace: ./workspaces/task_03
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_04
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is an in-memory caching workload requiring
+      very high throughput and sub-millisecond latency. Propose the optimal Google Cloud machine
+      type. Write your proposal to proposal.json with fields: machine_type, num_instances,
+      rationale. Consider memory-optimized instances and local SSD options.
+    workspace: ./workspaces/task_04
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_05
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a CI/CD build farm requiring high CPU
+      performance for compilation. Propose the optimal Google Cloud machine type. Write your
+      proposal to proposal.json with fields: machine_type, num_instances, rationale. Consider
+      compute-optimized instances with high single-thread and multi-thread performance.
+    workspace: ./workspaces/task_05
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_06
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a GKE cluster for a microservices platform.
+      Propose the optimal node machine type and cluster size. Write your proposal to proposal.json
+      with fields: machine_type, num_nodes, rationale. Consider auto-scaling, pod density, and
+      the mix of services with different resource profiles.
+    workspace: ./workspaces/task_06
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_07
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a GKE cluster for distributed GPU training.
+      Propose the optimal GPU node machine type and cluster size. Write your proposal to
+      proposal.json with fields: machine_type, num_nodes, rationale. Consider GPU topology,
+      NVLink, and the communication overhead of distributed training.
+    workspace: ./workspaces/task_07
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_08
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a GKE cluster for a highly available
+      stateful database service. Propose the optimal node machine type and cluster size. Write
+      your proposal to proposal.json with fields: machine_type, num_nodes, rationale. Consider
+      the 99.99% SLA requirement, zone distribution, and storage I/O needs for PostgreSQL.
+    workspace: ./workspaces/task_08
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_09
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a GKE cluster for a low-latency gaming
+      backend. Propose the optimal node machine type and cluster size. Write your proposal to
+      proposal.json with fields: machine_type, num_nodes, rationale. Consider the latency
+      sensitivity, burst capacity with Spot VMs, and connection handling requirements.
+    workspace: ./workspaces/task_09
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_10
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a GKE cluster for a high-throughput log
+      processing pipeline using Kafka and Elasticsearch. Propose the optimal node machine type
+      and cluster size for the Kafka tier (the primary bottleneck). Write your proposal to
+      proposal.json with fields: machine_type, num_nodes, rationale. Focus on the Kafka brokers.
+    workspace: ./workspaces/task_10
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_11
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This startup has a hard $500/month budget cap.
+      Propose the most cost-effective GCP machine type for the primary web/app tier. Write your
+      proposal to proposal.json with fields: machine_type, num_instances, rationale. The total
+      infrastructure (compute + DB + cache) must fit within budget — be conservative on the
+      compute tier.
+    workspace: ./workspaces/task_11
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_12
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is an enterprise lift-and-shift migration of
+      100 on-premise VMs. Propose the recommended target machine type family for the general
+      application tier. Write your proposal to proposal.json with fields: machine_type,
+      num_instances, rationale. Consider right-sizing (on-prem is typically 20-30% over-provisioned),
+      use of Committed Use Discounts, and choosing the right GCP machine family.
+    workspace: ./workspaces/task_12
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_13
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a multi-region deployment across US, EU,
+      and APAC. Propose the optimal GKE node machine type for each regional cluster. Write your
+      proposal to proposal.json with fields: machine_type, num_nodes, rationale. Consider
+      global load balancing, Cloud CDN for static assets, and consistent machine types across
+      regions for operational simplicity.
+    workspace: ./workspaces/task_13
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_14
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. The current infrastructure is significantly
+      over-provisioned at $50K/month. Propose the right-sized machine type for the primary
+      application tier. Write your proposal to proposal.json with fields: machine_type,
+      num_instances, rationale. Quantify the expected savings and identify which workloads
+      should move to Spot/Preemptible VMs.
+    workspace: ./workspaces/task_14
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
+
+  - name: task_15
+    instruction: |
+      You are a GCP infrastructure sizing advisor. Read context.md for the workload description
+      and workload.json for the requirements. This is a HIPAA-compliant healthcare workload
+      with strict data residency requirements (us-central1 only). Propose the optimal machine
+      type. Write your proposal to proposal.json with fields: machine_type, num_instances,
+      rationale. Ensure your recommendation addresses CMEK, VPC Service Controls, and regional
+      resource constraints.
+    workspace: ./workspaces/task_15
+    verify: ["python3", "/home/abhidaas/Core/Workspace/ClaudeCode/meta-agent-improver/verify_cloud.py"]
+    timeout: 120
