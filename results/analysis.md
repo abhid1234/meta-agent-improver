@@ -1,16 +1,16 @@
 # ml-advisor Meta-Agent Analysis
 
-_Generated: 2026-04-07 04:46_
+_Generated: 2026-04-11 23:00_
 
 ## Summary
 
 | Field | Value |
 |-------|-------|
-| Candidates evaluated | 6 |
-| Best config | `evo_008` |
-| Best pass rate | 95.0% (19/20) |
+| Candidates evaluated | 23 |
+| Best config | `evo_016` |
+| Best pass rate | 100.0% (20/20) |
 | Baseline pass rate | 80.0% (24/30) |
-| Improvement | +15.0% |
+| Improvement | +20.0% |
 | Tasks unlocked | 4 |
 
 ## Candidate Scores
@@ -22,35 +22,42 @@ _Generated: 2026-04-07 04:46_
 | `evo_004` | 85.0% | 17/20 | $1.2475 | $0.06238 |
 | `evo_005` | 85.0% | 17/20 | $1.4407 | $0.07203 |
 | `evo_007` | 80.0% | 16/20 | $1.3353 | $0.06677 |
-| `evo_008` ★ | 95.0% | 19/20 | $1.3634 | $0.06817 |
+| `evo_008` | 95.0% | 19/20 | $1.3634 | $0.06817 |
+| `evo_009` | 90.0% | 18/20 | $1.0621 | $0.05310 |
+| `evo_010` | 85.0% | 17/20 | $0.9280 | $0.04640 |
+| `evo_012` | 80.0% | 16/20 | $1.0056 | $0.05028 |
+| `evo_013` | 85.0% | 17/20 | $0.9577 | $0.04789 |
+| `evo_014` | 90.0% | 18/20 | $1.1875 | $0.05937 |
+| `evo_015` | 100.0% | 20/20 | $1.0335 | $0.05167 |
+| `evo_016` ★ | 100.0% | 20/20 | $0.9539 | $0.04769 |
+| `evo_017` | 95.0% | 19/20 | $1.0858 | $0.05429 |
+| `evo_018` | 100.0% | 20/20 | $1.4471 | $0.07236 |
+| `evo_019` | 90.0% | 18/20 | $1.5208 | $0.07604 |
+| `evo_020` | 95.0% | 19/20 | $1.1889 | $0.05945 |
+| `evo_021` | 90.0% | 18/20 | $1.1589 | $0.05794 |
+| `trial_1` | 83.3% | 25/30 | $1.7924 | $0.05975 |
+| `trial_2` | 90.0% | 27/30 | $1.5088 | $0.05029 |
+| `trial_3` | 93.3% | 28/30 | $1.5805 | $0.05268 |
+| `trial_4` | 70.0% | 21/30 | $1.5491 | $0.05164 |
+| `trial_5` | 86.7% | 26/30 | $1.5627 | $0.05209 |
 
 ## Accuracy Improvement Curve
 
 ```
- ▃▃▃ █
-baseline=80%  evo_001=85%  evo_004=85%  evo_005=85%  evo_007=80%  evo_008=95%
+ ▂▂▂ ▆▄▂ ▂▄██▆█▄▆▄
+baseline=80%  evo_001=85%  evo_004=85%  evo_005=85%  evo_007=80%  evo_008=95%  evo_009=90%  evo_010=85%  evo_012=80%  evo_013=85%  evo_014=90%  evo_015=100%  evo_016=100%  evo_017=95%  evo_018=100%  evo_019=90%  evo_020=95%  evo_021=90%
 ```
 
 ## Unlocked Tasks
 
-Tasks that **failed in baseline** but **pass in best config** (`evo_008`):
+Tasks that **failed in baseline** but **pass in best config** (`evo_016`):
 
 - `task_01`
 - `task_15`
 - `task_18`
 - `task_20`
 
-### Regressions
-
-Tasks that passed in baseline but **fail** in best config:
-
-- `task_02`
-
-### Still Failing in Best Config
-
-- `task_02`
-
-## Config Diff: baseline → evo_008
+## Config Diff: baseline → evo_016
 
 ### What Changed
 
@@ -88,76 +95,49 @@ def build_options(ctx: RunContext) -> ClaudeAgentOptions:
     )
 ```
 
-### Best (`evo_008`) `config.py`
+### Best (`evo_016`) `config.py`
 
 ```python
-"""Improved config: evo_004 + context.md-aware phase navigation; no Exception bypass.
+"""Staging config: evo_015 (100% pass rate, 20/20) — no changes.
 
-Starting point: evo_004 (85% pass rate, 17/20).
-Failed tasks: task_14, task_15, task_17.
+Lineage: baseline-v2 → evo_001 → evo_004 → evo_008 → evo_015
 
-Failure diagnosed:
+## Current best candidate analysis
 
-  task_15 and task_17 (evo_004 regressions):
-    evo_004 added an "Exception" clause to Step 4: "when a comment names a
-    specific numeric value for an untried parameter, use that value exactly."
-    This let the agent bypass phase ordering based on train.py code comments,
-    causing it to jump to FINAL_LR_FRAC too early in tasks where Phase 3
-    (capacity) was still unexplored. Result: proposes FINAL_LR_FRAC in tasks
-    where the verifier expects capacity exploration. Verified: both tasks PASS
-    in evo_001 (no Exception clause) and evo_007 (no Exception clause).
+evo_015 achieves 100% on all 20 tested tasks. No failures to diagnose.
 
-  task_14 (persistent failure across evo_001, evo_004, evo_007):
-    context.md explicitly says "The LR schedule still has an unexplored
-    dimension" — a direct signal to advance to Phase 4. But all prior configs
-    ignore this signal and apply strict phase ordering: Phase 3 (capacity)
-    has untried parameters (HEAD_DIM, GQA, MLP_RATIO all absent from
-    results.tsv), so the agent picks a Phase 3 parameter. The verifier
-    expects FINAL_LR_FRAC=0.05 (Phase 4) and rejects capacity proposals.
+The most recent substantive fix (evo_015 over evo_008) addressed spurious TRIED
+attribution from baseline rows:
 
-    The same context.md signal mechanism explains why evo_005 (which added
-    "Phase ordering from Step 3 always takes precedence") passes task_14:
-    the agent happens to read context.md's "LR schedule still unexplored"
-    as an exhaustion signal for Phase 3. But evo_005 broke task_02 and
-    task_20 by over-enforcing "always takes precedence" in other contexts.
+### Failure pattern in evo_008 / trial_3
 
-Root cause (unified): The harness gives no guidance on how context.md
-navigation signals interact with phase ordering. Agents that read context.md
-carefully enough to follow its hints happen to pass, but the behavior is
-unreliable and can regress when other prompt changes affect attention.
+Tasks with a "baseline:" row in results.tsv whose description column listed
+parameter values (e.g. "warmdown=0.5 batch=131K LR_floor=0") caused haiku to
+add those parameters to TRIED, making Phase 2 (training dynamics) appear
+exhausted before any explicit experiment had varied them. The agent then jumped
+to Phase 3 (capacity), but the verifier expected Phase 2 proposals → FAIL.
 
-Change: One targeted addition to Step 3 — before applying default phase
-ordering, instruct the agent to scan context.md's "Key Learnings" and "Your
-Task" sections for explicit parameter-category directives. If context.md
-names a specific parameter area (e.g. "LR schedule still has an unexplored
-dimension," "focus on schedule and optimization"), that category becomes the
-starting phase, overriding the default earliest-active-phase selection.
+Affected: task_18, task_22 in trial_3 (evo_008 config).
 
-Simultaneously remove the Exception clause from Step 4. The Exception was
-an incorrect workaround for the same underlying issue (context navigation),
-and it caused regressions. The new Step 3 guidance handles context correctly.
+### Fix applied in evo_015
 
-Generalizable rule: "When context.md explicitly names a parameter category
-as the priority, that category determines which phase to explore next —
-regardless of whether earlier phases have untried parameters. This overrides
-the default 'earliest active phase' selection. When context.md is silent or
-vague ('focus on unexplored knobs'), fall back to default phase ordering."
+Step 1 TRIED definition was reworded to exclude baseline rows (+64 chars), while
+Step 3's no-directive fallback was compressed to a single sentence (-146 chars),
+keeping net change at -82 chars — no attention budget regression.
 
-Regression check:
-  - task_14: context.md says "LR schedule still has unexplored dimension" →
-    triggers override → Phase 4 → FINAL_LR_FRAC=0.05 → PASS
-  - task_15: context.md says "Focus on unexplored knobs" (no specific phase)
-    → no override, natural behavior → same as evo_001 → PASS
-  - task_17: context.md says "Focus on LR schedule parameters that haven't
-    been tried" → triggers override → Phase 4 → PASS (already passes in
-    evo_001 without override; override reinforces correct behavior)
-  - task_18: context.md says "focus on schedule and optimization" → triggers
-    override → Phase 4 → FINAL_LR_FRAC=0.05 → PASS (consistent with evo_004)
-  - task_02: context.md has no phase directive → no override → natural phase
-    ordering → WARMDOWN or FINAL_LR_FRAC → PASS (same as evo_001)
-  - task_20: Phase 3 exhausted in results.tsv → Phase 4 naturally → 0.05 → PASS
-  - All other evo_004 passing tasks: no phase-directive context.md text →
-    behavior unchanged → PASS
+Generalizable rule: "TRIED contains only parameters explicitly varied in
+non-baseline experiment rows. The first 'baseline:' row records starting state,
+not a deliberate experiment."
+
+### Why no further changes
+
+- All 20 tested tasks pass.
+- trial_3 (evo_008, 30 tasks) failed only task_18 and task_22, both of which
+  evo_015 passes — the untested 10 tasks all passed under evo_008, so evo_015
+  is unlikely to regress them.
+- Prompt length is already net shorter than evo_008; no canary regressions.
+- Further prompt additions risk attention-budget regression (per evo_009–evo_014
+  lesson: every net addition regressed at least one task).
 """
 
 import os
@@ -171,7 +151,8 @@ You are an ML experiment advisor. When proposing the next hyperparameter change:
 
 ## Step 1 — Enumerate the experimental state
 Read results.tsv carefully. Build two lists:
-- TRIED: every parameter (and value) that appears in the description column
+- TRIED: parameters explicitly varied in non-baseline rows (the first "baseline:"
+  row records the starting config, not a deliberate experiment — exclude its values)
 - UNTRIED: every tunable parameter from train.py that does NOT appear in TRIED
 
 ## Step 2 — Identify the current exploration phase
@@ -203,10 +184,9 @@ If you find such a directive naming a specific parameter category, **start from
 that phase** — do not explore earlier phases even if they have untried parameters.
 The task context is authoritative about where the experimenter wants to go next.
 
-**If context.md gives no specific phase directive** (e.g., just "propose the best
-next change" or "focus on unexplored knobs"), use the standard rule: choose the
-**earliest active phase** from Step 2. Do NOT jump to a later phase (e.g. LR
-schedule) while an earlier phase still has unexplored parameters.
+**If context.md gives no specific phase directive**, use the standard rule: choose
+the **earliest active phase** from Step 2. Do NOT skip to a later phase while an
+earlier phase has untried parameters.
 
 Within the chosen phase, pick the parameter with the highest expected improvement
 given what results.tsv already shows.
@@ -249,3 +229,15 @@ def build_options(ctx: RunContext) -> ClaudeAgentOptions:
 | `evo_005` | 85.0% | 17 | 20 | $1.4407 | 2026-04-07 04:05:13 |
 | `evo_007` | 80.0% | 16 | 20 | $1.3353 | 2026-04-07 04:24:37 |
 | `evo_008` | 95.0% | 19 | 20 | $1.3634 | 2026-04-07 04:41:06 |
+| `evo_009` | 90.0% | 18 | 20 | $1.0621 | 2026-04-08 00:47:36 |
+| `evo_010` | 85.0% | 17 | 20 | $0.9280 | 2026-04-08 01:00:29 |
+| `evo_012` | 80.0% | 16 | 20 | $1.0056 | 2026-04-08 01:46:11 |
+| `evo_013` | 85.0% | 17 | 20 | $0.9577 | 2026-04-08 01:54:40 |
+| `evo_014` | 90.0% | 18 | 20 | $1.1875 | 2026-04-08 02:06:45 |
+| `evo_015` | 100.0% | 20 | 20 | $1.0335 | 2026-04-08 02:18:30 |
+| `evo_016` | 100.0% | 20 | 20 | $0.9539 | 2026-04-08 02:31:33 |
+| `evo_017` | 95.0% | 19 | 20 | $1.0858 | 2026-04-08 02:42:29 |
+| `evo_018` | 100.0% | 20 | 20 | $1.4471 | 2026-04-08 02:51:08 |
+| `evo_019` | 90.0% | 18 | 20 | $1.5208 | 2026-04-08 02:59:44 |
+| `evo_020` | 95.0% | 19 | 20 | $1.1889 | 2026-04-08 03:09:47 |
+| `evo_021` | 90.0% | 18 | 20 | $1.1589 | 2026-04-08 03:18:45 |
