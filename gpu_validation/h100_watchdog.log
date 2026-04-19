@@ -1,0 +1,57 @@
+[Sat Apr 18 10:26:26 PM UTC 2026] Watchdog started, polling every 60s...
+[Sat Apr 18 10:26:28 PM UTC 2026] experiments_completed=00/5, elapsed=0s
+[Sat Apr 18 10:27:33 PM UTC 2026] experiments_completed=00/5, elapsed=60s
+[Sat Apr 18 10:28:37 PM UTC 2026] experiments_completed=00/5, elapsed=120s
+[Sat Apr 18 10:29:42 PM UTC 2026] experiments_completed=00/5, elapsed=180s
+[Sat Apr 18 10:30:46 PM UTC 2026] experiments_completed=2/5, elapsed=240s
+[Sat Apr 18 10:31:50 PM UTC 2026] experiments_completed=2/5, elapsed=300s
+[Sat Apr 18 10:32:55 PM UTC 2026] experiments_completed=2/5, elapsed=360s
+[Sat Apr 18 10:33:59 PM UTC 2026] experiments_completed=2/5, elapsed=420s
+[Sat Apr 18 10:35:04 PM UTC 2026] experiments_completed=2/5, elapsed=480s
+[Sat Apr 18 10:36:08 PM UTC 2026] experiments_completed=2/5, elapsed=540s
+[Sat Apr 18 10:37:13 PM UTC 2026] experiments_completed=4/5, elapsed=600s
+[Sat Apr 18 10:38:18 PM UTC 2026] experiments_completed=4/5, elapsed=660s
+[Sun Apr 19 12:03:38 AM UTC 2026] experiments_completed=15/5, elapsed=720s
+[Sun Apr 19 12:03:38 AM UTC 2026] All 5 experiments complete!
+[Sun Apr 19 12:03:38 AM UTC 2026] Downloading log...
+Warning: Permanently added '[216.243.220.217]:10788' (ED25519) to the list of known hosts.
+[Sun Apr 19 12:03:42 AM UTC 2026] Terminating pod 4zklmjhtwcejf6...
+Pod terminated
+
+[Sun Apr 19 12:03:44 AM UTC 2026] Extracting val_bpb results...
+=== EXPERIMENT: h100_exp1_baseline_d6_L ===
+val_bpb:          1.079500
+num_steps:        1693
+val_bpb:          1.079500
+num_steps:        1693
+=== EXPERIMENT: h100_exp2_sssl_d6 ===
+val_bpb:          1.079383
+num_steps:        1699
+val_bpb:          1.079383
+num_steps:        1699
+=== EXPERIMENT: h100_exp3_full_optimized_d6 ===
+val_bpb:          1.077852
+num_steps:        1713
+val_bpb:          1.077852
+num_steps:        1713
+=== EXPERIMENT: h100_exp4_depth8_L ===
+val_bpb:          1.032166
+num_steps:        1649
+val_bpb:          1.032166
+num_steps:        1649
+=== EXPERIMENT: h100_exp5_depth8_full ===
+val_bpb:          1.031803
+num_steps:        1616
+val_bpb:          1.031803
+num_steps:        1616
+val_bpb:          1.079500
+num_steps:        1693
+val_bpb:          1.079383
+num_steps:        1699
+val_bpb:          1.077852
+num_steps:        1713
+val_bpb:          1.032166
+num_steps:        1649
+val_bpb:          1.031803
+num_steps:        1616
+[Sun Apr 19 12:03:44 AM UTC 2026] Watchdog finished.
