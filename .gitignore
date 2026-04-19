@@ -16,10 +16,22 @@ gpu_validation/takeaways.mp4
 gpu_validation/title.mp4
 gpu_validation/user_soundtrack_trimmed.m4a
 
-# Launch / marketing assets — kept local, not pushed
+# Launch / marketing / social assets — kept local, NEVER pushed
 docs/
 content.md
 social.md
+linkedin*.html
+linkedin*.md
+linkedin*.pdf
+*_post.html
+*_post.md
+twitter*.html
+twitter*.md
+x_post.*
+carousel*.pdf
+carousel*.pptx
+launch*.html
+launch*.md
 gpu_validation/meta-agent-demo.cast
 gpu_validation/meta-agent-demo.gif
 gpu_validation/meta-agent-demo.mp4
