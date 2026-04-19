@@ -223,9 +223,13 @@ If you run this on a different domain, I'd genuinely want to know what rules you
 ---
 
 **Repo:** [github.com/abhid1234/meta-agent-improver](https://github.com/abhid1234/meta-agent-improver)
+
 **Benchmark on HuggingFace:** [huggingface.co/datasets/abhid1234/ml-advisor-benchmark](https://huggingface.co/datasets/abhid1234/ml-advisor-benchmark)
+
 **The discovered prompt (Gist):** [gist.github.com/abhid1234/6156ba642074a90c2c939290d431c104](https://gist.github.com/abhid1234/6156ba642074a90c2c939290d431c104)
+
 **Framework:** [github.com/canvas-org/meta-agent](https://github.com/canvas-org/meta-agent)
+
 **Part 1 (the overnight autoresearch run):** [open.substack.com/pub/abhid/p/i-ran-an-autonomous-ai-research-agent](https://open.substack.com/pub/abhid/p/i-ran-an-autonomous-ai-research-agent)
 
 ---
