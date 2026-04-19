@@ -68,7 +68,7 @@ Tasks that **failed in baseline** but **pass in best config** (`evo_016`):
 ### Baseline `config.py`
 
 ```python
-"""Baseline config: Vanilla Haiku with no domain knowledge.
+"""Baseline config: vanilla inner model with no domain knowledge.
 
 No hooks, no custom system prompt, no tools beyond defaults.
 This is the floor — the simplest possible ML advisor config.
@@ -112,7 +112,7 @@ attribution from baseline rows:
 ### Failure pattern in evo_008 / trial_3
 
 Tasks with a "baseline:" row in results.tsv whose description column listed
-parameter values (e.g. "warmdown=0.5 batch=131K LR_floor=0") caused haiku to
+parameter values (e.g. "warmdown=0.5 batch=131K LR_floor=0") caused the inner model to
 add those parameters to TRIED, making Phase 2 (training dynamics) appear
 exhausted before any explicit experiment had varied them. The agent then jumped
 to Phase 3 (capacity), but the verifier expected Phase 2 proposals → FAIL.

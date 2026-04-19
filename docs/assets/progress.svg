@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="DM Sans, sans-serif">
+  <!-- Background -->
+  <rect width="760" height="340" fill="#fafaf8" rx="10"/>
+
+  <!-- Grid lines -->
+  <line x1="80" y1="260" x2="700" y2="260" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="80" y1="210" x2="700" y2="210" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="80" y1="160" x2="700" y2="160" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="80" y1="110" x2="700" y2="110" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="80" y1="60"  x2="700" y2="60"  stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Y-axis labels -->
+  <text x="68" y="264" text-anchor="end" font-size="12" fill="#6b7280">70%</text>
+  <text x="68" y="214" text-anchor="end" font-size="12" fill="#6b7280">80%</text>
+  <text x="68" y="164" text-anchor="end" font-size="12" fill="#6b7280">90%</text>
+  <text x="68" y="114" text-anchor="end" font-size="12" fill="#6b7280">95%</text>
+  <text x="68" y="64"  text-anchor="end" font-size="12" fill="#6b7280">100%</text>
+
+  <!-- Axes -->
+  <line x1="80" y1="40" x2="80" y2="270" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="80" y1="270" x2="700" y2="270" stroke="#1a1a2e" stroke-width="2"/>
+
+  <!-- Data points: baseline=80%, evo_001=85%, evo_004=85%, evo_007=80%, evo_008=95%, evo_009~014=95%, evo_015=100%
+       X positions spread across chart, Y mapped: 100%=60, 95%=110, 90%=160, 85%=185, 80%=210, 70%=260 -->
+  <!-- Y formula: 260 - ((val-70)/30)*200 -->
+  <!-- baseline=80% → y=193; evo_001=85%→y=160; evo_004=85%→y=160; evo_007=80%→y=210; evo_008=95%→y=110; plateau=95%; evo_015=100%→y=60 -->
+
+  <!-- Step x positions: baseline=110, evo_001=170, evo_004=240, evo_007=310, evo_008=370, evo_009=430, evo_014=530, evo_015=620 -->
+
+  <!-- Area fill -->
+  <polygon points="110,210 170,177 240,177 310,210 370,110 430,110 530,110 620,60 620,270 110,270"
+           fill="#4285F4" fill-opacity="0.08"/>
+
+  <!-- Line -->
+  <polyline points="110,210 170,177 240,177 310,210 370,110 430,110 530,110 620,60"
+            fill="none" stroke="#4285F4" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- Data dots -->
+  <circle cx="110" cy="210" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+  <circle cx="170" cy="177" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+  <circle cx="240" cy="177" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+  <circle cx="310" cy="210" r="6" fill="#dc2626" stroke="white" stroke-width="2"/>
+  <circle cx="370" cy="110" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+  <circle cx="430" cy="110" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+  <circle cx="530" cy="110" r="6" fill="#4285F4" stroke="white" stroke-width="2"/>
+  <circle cx="620" cy="60"  r="8" fill="#16a34a" stroke="white" stroke-width="2"/>
+
+  <!-- Annotations -->
+  <text x="110" y="230" text-anchor="middle" font-size="11" fill="#6b7280">baseline</text>
+  <text x="170" y="197" text-anchor="middle" font-size="11" fill="#6b7280">evo_001</text>
+  <text x="310" y="198" text-anchor="middle" font-size="11" fill="#dc2626">evo_007</text>
+  <text x="370" y="100" text-anchor="middle" font-size="11" fill="#6b7280">evo_008</text>
+  <text x="480" y="100" text-anchor="middle" font-size="11" fill="#6b7280">plateau</text>
+  <text x="620" y="50"  text-anchor="middle" font-size="12" font-weight="700" fill="#16a34a">evo_015</text>
+
+  <!-- Labels below x-axis -->
+  <text x="110" y="286" text-anchor="middle" font-size="10" fill="#6b7280">80%</text>
+  <text x="620" y="286" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="600">100%</text>
+
+  <!-- Title -->
+  <text x="390" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a2e" letter-spacing="0.5">Pass rate over 21 iterations — search set (30 tasks)</text>
+</svg>

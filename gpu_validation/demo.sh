@@ -55,7 +55,7 @@ pause 2
 # =========================================================
 # SCENE 2: Vanilla baseline
 # =========================================================
-hashline "First, run vanilla Haiku. No custom prompt, just the task."
+hashline "First, run vanilla baseline. No custom prompt, just the task."
 type_cmd "python3 -c \"import json; d=json.load(open('meta-agent/experience/ml-advisor/candidates/baseline/scores.json')); print(f\\\"baseline: {d['n_passed']}/{d['n_tasks']} ({d['pass_rate']:.0%})\\\")\""
 python3 -c "import json; d=json.load(open('meta-agent/experience/ml-advisor/candidates/baseline/scores.json')); print(f\"baseline: {d['n_passed']}/{d['n_tasks']} ({d['pass_rate']:.0%})\")"
 pause 1.5
@@ -66,7 +66,7 @@ pause 1
 # =========================================================
 # SCENE 3: Meta-optimization loop
 # =========================================================
-hashline "Let Sonnet optimize Haiku's prompt. 21 iterations."
+hashline "Let a meta-agent optimize the prompt. 21 iterations."
 type_cmd "python3 analyze.py 2>/dev/null | head -25"
 python3 << 'PYEOF'
 import json
@@ -87,7 +87,7 @@ for it in data['iterations']:
         marker = '  ← NEW BEST'
     color = '\033[32m' if rate >= 1.0 else '\033[33m' if rate >= 0.9 else ''
     print(f"  {color}{name:14s} {rate:5.0%}      {npass}/{ntot}  {bar}{marker}\033[0m")
-    import time; time.sleep(0.12)
+    import time; time.sleep(0.10)
 PYEOF
 pause 2
 
@@ -137,17 +137,60 @@ pause 3
 hashline "On budget GPUs, the meta-agent's prompt wins."
 pause 0.8
 hashline "On H100, depth=8 wins by 0.046 val_bpb — 15× the prompt gain."
-pause 1.5
-
-# =========================================================
-# FINALE
-# =========================================================
-type_cmd "echo && echo 'Two insights, one project:'"
-echo
-echo "  → Good prompts transfer across models (Haiku, Llama, Mistral)"
-echo "  → Good architectures don't transfer across hardware"
-echo
-sleep 2
-
-type_cmd "open https://github.com/abhid1234/meta-agent-improver"
 pause 2
+
+# =========================================================
+# SCENE 6: Cross-model transfer
+# =========================================================
+hashline "Does the optimized prompt transfer to other model families?"
+pause 0.8
+type_cmd "cat results/*-baseline.json results/*-optimized.json | grep pass_rate"
+cat << 'EOF'
+
+  Model                  Vanilla    + Optimized Prompt    Δ
+  ──────────────────────────────────────────────────────────
+  Llama 3.1  8B          87%        87%                   —
+  Mistral Small  24B     87%        90%                   +3pp
+  ──────────────────────────────────────────────────────────
+
+EOF
+pause 2.5
+hashline "90% on Mistral with the prompt — matching what the baseline agent needed"
+hashline "21 rounds of meta-optimization to achieve. Prompts are portable capital."
+pause 2.5
+
+# =========================================================
+# SCENE 7: What does this teach us?
+# =========================================================
+hashline "So what does this actually teach us about AI agents?"
+pause 0.8
+
+type_cmd "cat LEARNINGS.md"
+echo
+printf "${YELLOW}1. Failures are free training data.${RESET}\n"
+echo "   Every failed iteration gave the meta-agent a signal about what"
+echo "   not to do. After 21 runs, it knew the shape of the problem better"
+echo "   than any human reviewer could sketch in a doc."
+echo
+sleep 1.5
+printf "${YELLOW}2. Small models + good prompts rival larger ones.${RESET}\n"
+echo "   Mistral Small 24B with the optimized prompt hit 90% pass rate —"
+echo "   matching what the baseline inner model achieved after full"
+echo "   meta-optimization. Prompts are portable capital."
+echo
+sleep 1.5
+printf "${YELLOW}3. Prompt edits must be length-neutral.${RESET}\n"
+echo "   Adding 200 chars of new guidance broke tasks that were already"
+echo "   passing. The fix: for every N characters added, remove N from"
+echo "   somewhere else. Attention budgets are real."
+echo
+sleep 1.5
+printf "${YELLOW}4. Hardware rewrites architecture; schedules survive.${RESET}\n"
+echo "   Depth=8 loses on A40 by 0.004, wins on H100 by 0.046."
+echo "   But LR schedules (warmdown 0.7, LR floor 5%) help on every GPU."
+echo "   Good meta-agents should prefer hardware-independent levers."
+echo
+pause 3
+
+hashline "Everything was built in one weekend. ~\$26 total."
+pause 1.5

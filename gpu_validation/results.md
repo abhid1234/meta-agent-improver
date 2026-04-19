@@ -50,7 +50,7 @@ L40S actually completes more steps than H100 at this small model scale — the 2
 | H100 (5 experiments + setup) | 55 min | $2.99/hr | ~$2.75 |
 | **Total GPU spend** | | | **~$5** |
 
-Plus ~$21 API costs for all Claude-based meta-optimization. **Total project: ~$26.**
+Plus ~$21 API costs for all LLM-based meta-optimization. **Total project: ~$26.**
 
 ## Raw training logs
 - `experiments.log` — L40S runs (3 experiments)

@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LinkedIn Carousel — Meta-Agent Improver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:        #1a1a2e;
+    --warm-white:  #fafaf8;
+    --paper:       #f5f3ee;
+    --blue:        #4285F4;
+    --blue-light:  #e8f0fe;
+    --muted:       #6b7280;
+    --text:        #2d2d3a;
+    --border:      #e5e7eb;
+    --green:       #16a34a;
+    --red:         #dc2626;
+    --amber:       #d97706;
+    --purple:      #9333ea;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+    background: #d4d2cb;
+    color: var(--text);
+    padding: 40px 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 0 20px;
+  }
+
+  /* Slide canvas — 1080×1350 LinkedIn portrait */
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    background: var(--warm-white);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 90px 80px 110px;
+  }
+
+  /* Slide header / footer marks */
+  .slide-num {
+    position: absolute;
+    top: 50px; right: 80px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px; color: var(--muted);
+    font-weight: 500; letter-spacing: 1px;
+  }
+  .slide-tag {
+    position: absolute;
+    top: 50px; left: 80px;
+    font-size: 14px; color: var(--blue);
+    font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .footer-mark {
+    position: absolute;
+    bottom: 50px; left: 80px; right: 80px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 16px; color: var(--muted);
+  }
+  .footer-mark .brand {
+    font-family: 'DM Serif Display', serif;
+    color: var(--navy); font-size: 20px;
+  }
+  .footer-mark .swipe {
+    display: flex; align-items: center; gap: 8px; font-weight: 500;
+  }
+  .footer-mark .swipe-arrow { font-size: 22px; color: var(--blue); }
+
+  /* Typography */
+  h1.title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 88px; line-height: 1.04; color: var(--navy);
+    margin: 0 0 30px; font-weight: 400; letter-spacing: -1.5px;
+  }
+  h2.heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 64px; line-height: 1.08; color: var(--navy);
+    margin: 0 0 28px; font-weight: 400; letter-spacing: -1px;
+  }
+  h3.sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 28px; line-height: 1.4; color: var(--muted);
+    font-weight: 400; margin: 0 0 50px;
+  }
+  p.body {
+    font-size: 26px; line-height: 1.55; color: var(--text); margin: 0 0 24px;
+  }
+  .accent { color: var(--blue); font-weight: 600; }
+
+  /* Slide 1 — hook */
+  .slide-1 .hook-eyebrow {
+    font-size: 22px; color: var(--blue); font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px;
+  }
+  .slide-1 .hook-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 106px; line-height: 0.98; color: var(--navy);
+    margin: 0 0 50px; font-weight: 400; letter-spacing: -2px;
+  }
+  .slide-1 .hook-sub {
+    font-size: 34px; line-height: 1.35; color: var(--text);
+    margin: 0 0 60px; max-width: 880px;
+  }
+  .slide-1 .hook-stat-row {
+    display: flex; gap: 60px; margin-top: auto;
+    padding-top: 40px; border-top: 2px solid var(--navy);
+  }
+  .slide-1 .hook-stat .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 80px; line-height: 1; color: var(--navy);
+  }
+  .slide-1 .hook-stat .num.green { color: var(--green); }
+  .slide-1 .hook-stat .label {
+    font-size: 18px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 8px; max-width: 240px;
+  }
+
+  /* Numbers grid */
+  .numbers-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 36px; flex: 1; align-content: center; margin-top: -20px;
+  }
+  .num-card {
+    background: var(--paper); border-radius: 16px;
+    padding: 48px 42px; border-left: 6px solid var(--blue);
+  }
+  .num-card.red   { border-left-color: var(--red);   }
+  .num-card.amber { border-left-color: var(--amber);  }
+  .num-card.green { border-left-color: var(--green);  }
+  .num-card .num-big {
+    font-family: 'DM Serif Display', serif;
+    font-size: 88px; line-height: 1; color: var(--navy); margin: 0;
+  }
+  .num-card.green .num-big { color: var(--green); }
+  .num-card .num-label { font-size: 22px; color: var(--text); font-weight: 500; margin-top: 14px; }
+  .num-card .num-sub   { font-size: 17px; color: var(--muted); margin-top: 6px; }
+
+  /* Plan/reality grid */
+  .plan-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 50px; margin-top: 30px; flex: 1;
+  }
+  .plan-col { border-top: 4px solid var(--navy); padding-top: 30px; }
+  .plan-col.plan     { border-top-color: var(--blue); }
+  .plan-col.reality  { border-top-color: var(--red);  }
+  .plan-col h4 {
+    font-family: 'DM Sans', sans-serif; font-size: 18px; margin: 0 0 24px;
+    text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 600;
+  }
+  .plan-col ul { list-style: none; padding: 0; margin: 0; }
+  .plan-col li { font-size: 24px; line-height: 1.45; margin-bottom: 22px; padding-left: 32px; position: relative; }
+  .plan-col.plan li::before    { content: "→"; position: absolute; left: 0; color: var(--blue); font-weight: 700; }
+  .plan-col.reality li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+
+  /* Code reveal */
+  .code-reveal {
+    background: var(--navy); color: #e0e0e8; border-radius: 14px;
+    padding: 40px 38px; font-family: 'Fira Code', monospace;
+    font-size: 17px; line-height: 1.7; margin: 30px 0;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  .code-comment   { color: #6b7280; }
+  .code-key       { color: #7eb5f0; }
+  .code-string    { color: #a5d6a7; }
+  .code-heading   { color: #ffd700; font-weight: 600; }
+  .code-step      { color: #9ec5ff; }
+  .code-highlight { background: #4285F4; color: white; padding: 2px 5px; border-radius: 3px; }
+  .reveal-after { font-size: 26px; line-height: 1.5; color: var(--text); margin-top: 30px; }
+  .reveal-after strong { color: var(--navy); }
+
+  /* Rules list */
+  .rules-list {
+    counter-reset: rule; margin: 30px 0 0; padding: 0; list-style: none; flex: 1;
+  }
+  .rules-list li {
+    counter-increment: rule;
+    padding: 22px 0 22px 90px; border-bottom: 1px solid var(--border);
+    font-size: 25px; line-height: 1.4; color: var(--text); position: relative;
+  }
+  .rules-list li::before {
+    content: counter(rule, decimal-leading-zero);
+    position: absolute; left: 0; top: 22px;
+    font-family: 'DM Serif Display', serif; font-size: 38px;
+    color: var(--blue); line-height: 1;
+  }
+  .rules-list li:last-child { border-bottom: none; }
+  .rules-list li strong { color: var(--navy); }
+
+  /* Transfer table */
+  .transfer-table {
+    width: 100%; border-collapse: collapse; font-size: 26px;
+    margin-top: 40px; flex: 1;
+  }
+  .transfer-table th {
+    background: var(--blue-light); color: var(--navy);
+    padding: 20px 24px; text-align: left; font-size: 18px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+  }
+  .transfer-table td {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .transfer-table tr:last-child td { border-bottom: none; }
+  .badge-gain { color: var(--green); font-weight: 700; }
+  .badge-flat { color: var(--muted); }
+
+  /* GPU bars */
+  .gpu-chart {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; gap: 28px; margin-top: 30px;
+  }
+  .gpu-row { display: flex; align-items: center; gap: 20px; }
+  .gpu-label { font-size: 22px; font-weight: 600; color: var(--navy); min-width: 120px; }
+  .gpu-bar-wrap { flex: 1; position: relative; height: 52px; }
+  .gpu-bar {
+    height: 100%; border-radius: 6px;
+    display: flex; align-items: center; padding: 0 16px;
+    font-family: 'Fira Code', monospace; font-size: 18px; font-weight: 500; color: white;
+  }
+  .gpu-bar.baseline { background: var(--muted); }
+  .gpu-bar.opt      { background: var(--blue); }
+  .gpu-bar.best     { background: var(--green); }
+
+  /* CTA panel */
+  .cta-panel { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+  .cta-panel .cta-title {
+    font-family: 'DM Serif Display', serif; font-size: 62px; line-height: 1.04;
+    color: var(--navy); margin: 0 0 22px; letter-spacing: -0.5px;
+  }
+  .cta-panel .cta-sub {
+    font-size: 24px; line-height: 1.45; color: var(--muted); margin: 0 0 36px; max-width: 840px;
+  }
+  .cta-resources { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .cta-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 22px; background: var(--paper);
+    border-left: 5px solid var(--blue); border-radius: 6px; font-size: 18px;
+  }
+  .cta-row .label {
+    font-weight: 600; color: var(--navy); min-width: 150px;
+    font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .cta-row .desc {
+    color: var(--text); font-family: 'Fira Code', monospace;
+    font-size: 16px; word-break: break-all;
+  }
+
+  /* Doc header */
+  .doc-header { max-width: 1080px; margin: 0 auto 30px; padding: 0 20px; color: var(--navy); }
+  .doc-header h1 { font-family: 'DM Serif Display', serif; font-size: 32px; margin: 0 0 8px; }
+  .doc-header p  { color: var(--muted); margin: 0; font-size: 15px; }
+
+  /* Iteration progress bar */
+  .progress-chart { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; margin-top: 20px; }
+  .prog-row { display: flex; align-items: center; gap: 16px; }
+  .prog-label { font-size: 19px; font-weight: 600; color: var(--navy); min-width: 120px; font-family: 'Fira Code', monospace; }
+  .prog-bar-wrap { flex: 1; background: var(--paper); border-radius: 6px; height: 46px; overflow: hidden; }
+  .prog-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 14px; color: white; font-size: 18px; font-weight: 600; transition: width 0.3s ease; }
+  .prog-bar.b80  { width: 80%;  background: var(--muted); }
+  .prog-bar.b85  { width: 85%;  background: var(--blue); }
+  .prog-bar.b80r { width: 80%;  background: var(--red); }
+  .prog-bar.b95  { width: 95%;  background: var(--blue); }
+  .prog-bar.b100 { width: 100%; background: var(--green); }
+  .prog-note { font-size: 16px; color: var(--muted); min-width: 160px; text-align: right; }
+
+  @page { size: 1080px 1350px; margin: 0; }
+  @media print {
+    body { background: white; padding: 0; margin: 0; }
+    .stage { gap: 0; padding: 0; max-width: none; }
+    .doc-header { display: none; }
+    .slide { box-shadow: none; page-break-after: always; break-after: page; width: 1080px; height: 1350px; }
+    .slide:last-child { page-break-after: auto; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="doc-header">
+    <h1>LinkedIn Carousel — Meta-Agent Improver</h1>
+    <p>9 slides · 1080×1350 portrait · screenshot each slide or print to PDF for upload as a LinkedIn document</p>
+  </div>
+
+  <div class="stage">
+
+    <!-- ================= SLIDE 1 — HOOK ================= -->
+    <div class="slide slide-1">
+      <div class="slide-tag">Meta-agent optimization</div>
+      <div class="slide-num">01 / 09</div>
+
+      <div class="hook-eyebrow">ML · Meta-agents · Prompt optimization</div>
+      <h1 class="hook-title">I let AI optimize an AI researcher.</h1>
+      <p class="hook-sub">A meta-agent read its own failure traces and rewrote its own guidance. After 21 iterations: 100% on search set, 90% on holdout. $26 total. Then the real surprise arrived.</p>
+
+      <div class="hook-stat-row">
+        <div class="hook-stat">
+          <div class="num green">100%</div>
+          <div class="label">search set after 21 iterations</div>
+        </div>
+        <div class="hook-stat">
+          <div class="num">90%</div>
+          <div class="label">locked holdout — the number I trust</div>
+        </div>
+        <div class="hook-stat">
+          <div class="num">$26</div>
+          <div class="label">total cost including GPU</div>
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 2 — THE PROBLEM ================= -->
+    <div class="slide">
+      <div class="slide-tag">The benchmark</div>
+      <div class="slide-num">02 / 09</div>
+
+      <h2 class="heading">The setup.</h2>
+      <h3 class="sub">A 30-task ML hyperparameter advisor with a deterministic verifier.</h3>
+
+      <div class="plan-grid">
+        <div class="plan-col plan">
+          <h4>Inner agent</h4>
+          <ul>
+            <li>Reads experiment log + training script</li>
+            <li>Proposes next best hyperparameter change</li>
+            <li>80% baseline accuracy (24/30)</li>
+            <li>Struggles with phase ordering</li>
+            <li>Misreads context directives</li>
+          </ul>
+        </div>
+        <div class="plan-col reality">
+          <h4>Outer loop (meta-agent)</h4>
+          <ul>
+            <li>Reads inner agent's failure traces</li>
+            <li>Proposes edits to the system prompt</li>
+            <li>Runs 21 evolution cycles</li>
+            <li>No fine-tuning, no gradient updates</li>
+            <li>Deterministic verifier — no LLM judge</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 3 — ARCHITECTURE ================= -->
+    <div class="slide">
+      <div class="slide-tag">Architecture</div>
+      <div class="slide-num">03 / 09</div>
+
+      <h2 class="heading">How the loop works.</h2>
+
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:0;margin-top:20px">
+        <!-- Box 1: Outer loop -->
+        <div style="background:var(--blue-light);border:3px solid var(--blue);border-radius:16px;padding:44px 50px;margin-bottom:0">
+          <div style="font-size:20px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Outer Loop (proposer)</div>
+          <div style="font-size:26px;color:var(--text);line-height:1.5">Reads failure traces → rewrites system prompt of inner agent</div>
+        </div>
+        <!-- Arrow down -->
+        <div style="text-align:center;padding:14px 0;font-size:50px;color:var(--blue)">↓ <span style="font-size:20px;color:var(--muted);vertical-align:middle">new prompt</span></div>
+        <!-- Box 2: Inner agent -->
+        <div style="background:var(--paper);border:3px solid var(--navy);border-radius:16px;padding:44px 50px;margin-bottom:0">
+          <div style="font-size:20px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Inner Agent (ML advisor)</div>
+          <div style="font-size:26px;color:var(--text);line-height:1.5">Reads experiment log + context → proposes next hyperparameter</div>
+        </div>
+        <!-- Arrow down -->
+        <div style="text-align:center;padding:14px 0;font-size:50px;color:var(--navy)">↓ <span style="font-size:20px;color:var(--muted);vertical-align:middle">proposal</span></div>
+        <!-- Box 3: Verifier -->
+        <div style="background:#dcfce7;border:3px solid var(--green);border-radius:16px;padding:44px 50px">
+          <div style="font-size:20px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Deterministic Verifier</div>
+          <div style="font-size:26px;color:var(--text);line-height:1.5">Checks against ground truth → pass / fail → feeds failures back to outer loop</div>
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 4 — ITERATION EVOLUTION ================= -->
+    <div class="slide">
+      <div class="slide-tag">Iteration progress</div>
+      <div class="slide-num">04 / 09</div>
+
+      <h2 class="heading">How accuracy evolved.</h2>
+      <h3 class="sub">21 iterations. One regression. One breakthrough.</h3>
+
+      <div class="progress-chart">
+        <div class="prog-row">
+          <div class="prog-label">baseline</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b80">80%</div></div>
+          <div class="prog-note">24/30 tasks</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">evo_001</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b85">85%</div></div>
+          <div class="prog-note">phase ordering added</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">evo_004</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b85">85%</div></div>
+          <div class="prog-note">"Exception" clause</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">evo_007</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b80r">80%</div></div>
+          <div class="prog-note" style="color:var(--red)">regression ← exception backfired</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">evo_008</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b95">95%</div></div>
+          <div class="prog-note">root cause fixed</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">evo_009–014</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b95">95%</div></div>
+          <div class="prog-note">6-iteration plateau</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">evo_015</div>
+          <div class="prog-bar-wrap"><div class="prog-bar b100">100%</div></div>
+          <div class="prog-note" style="color:var(--green);font-weight:700">30/30 ✓</div>
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 5 — THE 4 RULES ================= -->
+    <div class="slide">
+      <div class="slide-tag">What the meta-agent discovered</div>
+      <div class="slide-num">05 / 09</div>
+
+      <h2 class="heading">Four rules. Found independently.</h2>
+
+      <ol class="rules-list">
+        <li><strong>Explore architecture before training dynamics, dynamics before LR schedule.</strong> Don't jump phases. Follow the natural order.</li>
+        <li><strong>When context.md gives an explicit directive, it overrides phase ordering.</strong> The experimenter's intent is authoritative.</li>
+        <li><strong>Always try FINAL_LR_FRAC=0.05 first — never 0.1 on a first trial.</strong> A high LR floor prevents sufficient decay.</li>
+        <li><strong>Exclude the baseline row from the "TRIED" list.</strong> It's a starting state, not a tested value.</li>
+      </ol>
+
+      <p class="body" style="font-size:24px;color:var(--muted);margin-top:28px">
+        These are what a senior ML engineer tells a junior one in week one. The meta-agent rediscovered standard practice from failure traces alone.
+      </p>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 6 — CROSS-MODEL TRANSFER ================= -->
+    <div class="slide">
+      <div class="slide-tag">Cross-model transfer</div>
+      <div class="slide-num">06 / 09</div>
+
+      <h2 class="heading">Same prompt. Different models.</h2>
+      <h3 class="sub">The optimized _ADVISOR_GUIDANCE — unchanged — applied to Mistral and Llama.</h3>
+
+      <table class="transfer-table">
+        <tr>
+          <th>Model</th>
+          <th>Baseline</th>
+          <th>With optimized prompt</th>
+          <th>Delta</th>
+        </tr>
+        <tr>
+          <td style="font-size:22px;font-weight:600;color:var(--navy)">Original inner model</td>
+          <td style="font-size:22px">80%</td>
+          <td style="font-size:22px;font-weight:700;color:var(--green)">100%</td>
+          <td class="badge-gain" style="font-size:22px">+20pp</td>
+        </tr>
+        <tr>
+          <td style="font-size:22px;font-weight:600;color:var(--navy)">Mistral Small 24B</td>
+          <td style="font-size:22px">87%</td>
+          <td style="font-size:22px;font-weight:700;color:var(--green)">90%</td>
+          <td class="badge-gain" style="font-size:22px">+3pp</td>
+        </tr>
+        <tr>
+          <td style="font-size:22px;font-weight:600;color:var(--navy)">Llama 3.1 8B</td>
+          <td style="font-size:22px">87%</td>
+          <td style="font-size:22px">87%</td>
+          <td class="badge-flat" style="font-size:22px">0 (different tasks)</td>
+        </tr>
+      </table>
+
+      <div style="margin-top:50px;background:var(--blue-light);border-left:6px solid var(--blue);padding:36px 40px;border-radius:0 16px 16px 0">
+        <div style="font-size:26px;line-height:1.5;color:var(--navy)">
+          The rules describe <strong>what good ML research reasoning looks like</strong> — not what one specific model needs to hear. That's why they transferred.
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 7 — GPU VALIDATION ================= -->
+    <div class="slide">
+      <div class="slide-tag">GPU validation</div>
+      <div class="slide-num">07 / 09</div>
+
+      <h2 class="heading">The depth=8 bombshell.</h2>
+      <h3 class="sub">On A40 it hurt. On H100 it was the best result by a wide margin.</h3>
+
+      <div class="gpu-chart">
+        <div style="font-size:19px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">A40 — val_bpb (lower = better)</div>
+        <div class="gpu-row">
+          <div class="gpu-label">baseline</div>
+          <div class="gpu-bar-wrap"><div class="gpu-bar baseline" style="width:80%">1.0980</div></div>
+        </div>
+        <div class="gpu-row">
+          <div class="gpu-label">depth=6 opt</div>
+          <div class="gpu-bar-wrap"><div class="gpu-bar opt" style="width:78%">1.0949</div></div>
+        </div>
+        <div class="gpu-row">
+          <div class="gpu-label" style="color:var(--red)">depth=8</div>
+          <div class="gpu-bar-wrap"><div class="gpu-bar" style="width:85%;background:var(--red)">1.1017 ← worse</div></div>
+        </div>
+
+        <div style="font-size:19px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:30px 0 8px">H100 — val_bpb (lower = better)</div>
+        <div class="gpu-row">
+          <div class="gpu-label">baseline</div>
+          <div class="gpu-bar-wrap"><div class="gpu-bar baseline" style="width:80%">1.0950</div></div>
+        </div>
+        <div class="gpu-row">
+          <div class="gpu-label">depth=6 opt</div>
+          <div class="gpu-bar-wrap"><div class="gpu-bar opt" style="width:70%">1.0779</div></div>
+        </div>
+        <div class="gpu-row">
+          <div class="gpu-label" style="color:var(--green);font-weight:700">depth=8</div>
+          <div class="gpu-bar-wrap"><div class="gpu-bar best" style="width:40%">1.0318 ← BEST</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:30px;font-size:24px;color:var(--muted);line-height:1.5">
+        +0.003 from prompt optimization. <strong style="color:var(--green)">+0.046 from depth=8 on H100</strong>. Architecture is hardware-conditional. Prompts transfer.
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 8 — KEY TAKEAWAY ================= -->
+    <div class="slide">
+      <div class="slide-tag">The lesson</div>
+      <div class="slide-num">08 / 09</div>
+
+      <h2 class="heading">Two different levers.</h2>
+
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:30px;margin-top:20px">
+        <div style="background:var(--blue-light);border-left:8px solid var(--blue);border-radius:0 16px 16px 0;padding:44px 50px">
+          <div style="font-size:22px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">Prompts</div>
+          <div style="font-size:30px;line-height:1.5;color:var(--navy)">Transfer across model families. The rules describe <em>good reasoning</em>, not a model-specific quirk.</div>
+          <div style="font-size:22px;color:var(--muted);margin-top:12px">+0.003 val_bpb · consistent across A40/L40S/H100</div>
+        </div>
+        <div style="background:#dcfce7;border-left:8px solid var(--green);border-radius:0 16px 16px 0;padding:44px 50px">
+          <div style="font-size:22px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">Architecture</div>
+          <div style="font-size:30px;line-height:1.5;color:var(--navy)">Hardware-conditional. depth=8 was the wrong answer on A40 and the best answer on H100.</div>
+          <div style="font-size:22px;color:var(--muted);margin-top:12px">+0.046 val_bpb on H100 · 15× larger than the prompt win</div>
+        </div>
+        <div style="background:var(--paper);border-left:8px solid var(--amber);border-radius:0 16px 16px 0;padding:44px 50px">
+          <div style="font-size:22px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">Counterintuitive GPU note</div>
+          <div style="font-size:26px;line-height:1.5;color:var(--navy)">L40S ($0.79/hr) ran <strong>1,891 steps</strong>. H100 ($2.99/hr) ran <strong>1,699 steps</strong>. At sub-50M params, kernel overhead dominates.</div>
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe">Swipe <span class="swipe-arrow">→</span></div>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 9 — CTA ================= -->
+    <div class="slide">
+      <div class="slide-tag">Resources</div>
+      <div class="slide-num">09 / 09</div>
+
+      <div class="cta-panel">
+        <h2 class="cta-title">Everything is open.</h2>
+        <p class="cta-sub">All 30 benchmark tasks, 21 evolution configs, the verifier, and the GPU harness. The framework handles the loop mechanics.</p>
+
+        <div class="cta-resources">
+          <div class="cta-row">
+            <div class="label">Repo</div>
+            <div class="desc">github.com/abhid1234/meta-agent-improver</div>
+          </div>
+          <div class="cta-row">
+            <div class="label">Framework</div>
+            <div class="desc">github.com/canvas-org/meta-agent</div>
+          </div>
+          <div class="cta-row">
+            <div class="label">Full write-up</div>
+            <div class="desc">open.substack.com/pub/abhid — blog.html</div>
+          </div>
+          <div class="cta-row">
+            <div class="label">Part 1</div>
+            <div class="desc">open.substack.com/pub/abhid/p/i-ran-an-autonomous-ai-research-agent</div>
+          </div>
+          <div class="cta-row">
+            <div class="label">Quick start</div>
+            <div class="desc">pip install -e . then python -m meta_agent.outer_loop</div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;font-size:24px;line-height:1.55;color:var(--text)">
+          <strong>What I'd want to know:</strong> if you run this on a different domain, what rules does the meta-agent discover? Are they similarly "obvious in retrospect"?
+        </div>
+      </div>
+
+      <div class="footer-mark">
+        <div class="brand">Abhi Das</div>
+        <div class="swipe" style="color:var(--blue);font-weight:600">Follow for more notes</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

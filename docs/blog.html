@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Let AI Optimize the AI Researcher Itself — Here's What Actually Works (and What Doesn't)</title>
+<meta name="description" content="A $26 weekend experiment on how meta-agents get better at advising ML experiments, and why the hardware mattered more than the prompt.">
+<meta property="og:title" content="I Let AI Optimize the AI Researcher Itself — Here's What Actually Works (and What Doesn't)">
+<meta property="og:description" content="80% → 100% on 30 tasks, 21 iterations, $26 total. The meta-agent rewrote its own guidance — and the most important thing it discovered had nothing to do with prompts.">
+<meta property="og:type" content="article">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --navy:        #1a1a2e;
+    --warm-white:  #fafaf8;
+    --blue:        #4285F4;
+    --blue-light:  #e8f0fe;
+    --muted:       #6b7280;
+    --text:        #2d2d3a;
+    --border:      #e5e7eb;
+    --code-bg:     #1a1a2e;
+    --code-text:   #e0e0e8;
+    --code-comment:#6b7280;
+    --code-keyword:#7eb5f0;
+    --code-string: #a5d6a7;
+    --hl-yellow:   #fff3c4;
+    --hl-green:    #dcfce7;
+    --hl-red:      #fee2e2;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--warm-white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Sticky nav */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(250, 250, 248, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+  }
+  .nav-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 13px;
+  }
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    margin-left: 18px;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-cta {
+    display: inline-block;
+    padding: 6px 14px;
+    background: var(--navy);
+    color: var(--warm-white);
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 18px;
+  }
+  .nav-cta:hover { background: var(--blue); }
+
+  /* Container */
+  .wrapper {
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 720px) 1fr;
+    gap: 0;
+    padding: 0 24px;
+  }
+  .hero, main { grid-column: 2; }
+
+  /* Hero */
+  .hero { padding: 64px 0 32px; }
+  .hero .eyebrow {
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
+    color: var(--navy);
+    font-size: 44px;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    letter-spacing: -0.5px;
+  }
+  .hero .subtitle {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 20px;
+    line-height: 1.5;
+    margin: 0 0 32px;
+  }
+  .hero .meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .hero .meta .dot { color: var(--border); }
+
+  /* Hero stats grid */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 40px 0;
+  }
+  .stat {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--blue);
+  }
+  .stat.hero-stat::before { background: #16a34a; }
+  .stat .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 34px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -1px;
+  }
+  .stat.hero-stat .num { color: #16a34a; font-size: 38px; }
+  .stat .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+  }
+  .stat .detail {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat .num { font-size: 26px; }
+  }
+
+  /* TL;DR card */
+  .tldr {
+    background: var(--blue-light);
+    border-left: 4px solid var(--blue);
+    padding: 22px 26px;
+    margin: 40px 0;
+    border-radius: 0 10px 10px 0;
+  }
+  .tldr h3 {
+    margin: 0 0 12px;
+    font-family: 'DM Serif Display', serif;
+    color: var(--navy);
+    font-size: 20px;
+    font-weight: 400;
+  }
+  .tldr p { margin: 0 0 8px; font-size: 15px; }
+  .tldr p:last-child { margin-bottom: 0; }
+  .tldr strong { color: var(--navy); }
+
+  /* Typography */
+  main h2 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--navy);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.25;
+    margin: 56px 0 18px;
+    letter-spacing: -0.3px;
+  }
+  main h3 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--navy);
+    font-size: 22px;
+    font-weight: 400;
+    margin: 36px 0 14px;
+  }
+  main p { margin: 0 0 18px; }
+  main strong { color: var(--navy); }
+  main em { color: var(--navy); }
+
+  main a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  main a:hover { color: var(--navy); }
+
+  /* Figure / chart containers */
+  figure {
+    margin: 36px 0;
+    padding: 0;
+  }
+  figure img, figure object, figure svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  figure figcaption {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* Lists */
+  main ul, main ol {
+    padding-left: 24px;
+    margin: 0 0 20px;
+  }
+  main li { margin-bottom: 8px; }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--blue-light);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.best { font-weight: 700; color: #16a34a; }
+
+  /* Code */
+  code {
+    font-family: 'Fira Code', 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+    background: var(--blue-light);
+    color: var(--navy);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 18px 22px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 24px 0;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+  }
+  pre .c  { color: var(--code-comment); font-style: italic; }
+  pre .k  { color: var(--code-keyword); }
+  pre .s  { color: var(--code-string); }
+  pre .h2 { color: #ffd700; font-weight: 600; }
+  pre .h3 { color: #9ec5ff; }
+  pre .step { color: #a5d6a7; font-weight: 600; }
+
+  /* Blockquote */
+  blockquote {
+    border-left: 4px solid var(--blue);
+    padding: 4px 0 4px 20px;
+    margin: 26px 0;
+    color: var(--navy);
+    font-style: italic;
+    font-size: 18px;
+  }
+
+  /* Callouts */
+  .callout {
+    padding: 18px 22px;
+    border-radius: 10px;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+  .callout.learned {
+    background: var(--hl-green);
+    border-left: 4px solid #16a34a;
+  }
+  .callout.learned::before {
+    content: "LESSON";
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #16a34a;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
+  }
+  .callout.warn {
+    background: var(--hl-yellow);
+    border-left: 4px solid #d97706;
+  }
+  .callout.warn::before {
+    content: "WATCH OUT";
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #d97706;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
+  }
+  .callout.insight {
+    background: var(--hl-red);
+    border-left: 4px solid #dc2626;
+  }
+  .callout.insight::before {
+    content: "KEY INSIGHT";
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #dc2626;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
+  }
+
+  /* Section nav */
+  .section-nav {
+    background: var(--navy);
+    color: var(--warm-white);
+    padding: 28px 32px;
+    border-radius: 14px;
+    margin: 40px 0;
+  }
+  .section-nav h3 {
+    margin: 0 0 18px;
+    color: var(--warm-white);
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .section-nav ol {
+    padding-left: 22px;
+    margin: 0;
+  }
+  .section-nav li {
+    margin-bottom: 10px;
+    color: var(--warm-white);
+  }
+  .section-nav a {
+    color: #9ec5ff;
+    text-decoration: none;
+  }
+  .section-nav a:hover { color: var(--warm-white); }
+
+  /* Author card */
+  .author {
+    margin: 72px 0 32px;
+    padding: 32px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .author h3 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--navy);
+    font-size: 22px;
+    margin: 0 0 12px;
+    font-weight: 400;
+  }
+  .author p {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .author a {
+    color: var(--blue);
+    text-decoration: none;
+    margin-right: 16px;
+    font-weight: 500;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 72px;
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    body { font-size: 16px; }
+    .hero h1 { font-size: 32px; }
+    .hero .subtitle { font-size: 17px; }
+    main h2 { font-size: 24px; }
+    main h3 { font-size: 19px; }
+    pre { padding: 14px 16px; font-size: 12px; }
+    .wrapper { padding: 0 16px; }
+    .nav-links a { display: none; }
+    .nav-cta { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-brand">JustCurious</a>
+    <div class="nav-links">
+      <a href="#tldr">TL;DR</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#lessons">Lessons</a>
+      <a href="#try">Try It</a>
+      <a href="https://github.com/abhid1234/meta-agent-improver" class="nav-cta">Repo →</a>
+    </div>
+  </div>
+</nav>
+
+<div id="top" class="wrapper">
+
+  <header class="hero">
+    <div class="eyebrow">Engineering &middot; Meta-Agents &middot; 2026-04-19</div>
+    <h1>I Let AI Optimize the AI Researcher Itself — Here's What Actually Works (and What Doesn't)</h1>
+    <p class="subtitle">A $26 weekend experiment on how meta-agents get better at advising ML experiments, and why the hardware mattered more than the prompt.</p>
+    <div class="meta">
+      <span>Abhi Das</span><span class="dot">•</span>
+      <span>~20 min read</span><span class="dot">•</span>
+      <span>21 iterations · 30 tasks</span><span class="dot">•</span>
+      <span>3 GPU classes validated</span>
+    </div>
+  </header>
+
+  <main>
+
+    <p>A few weeks ago I ran 16 overnight ML experiments on an A40 GPU — an inner model playing researcher, reading logs, proposing hyperparameter changes, iterating. It worked. Cost me $15 and a night's sleep. (<a href="https://open.substack.com/pub/abhid/p/i-ran-an-autonomous-ai-research-agent">That story is Part 1.</a>)</p>
+
+    <p>The follow-up question was obvious: what if I let AI optimize the AI researcher itself?</p>
+
+    <p>That's what this is. A meta-agent that reads its own failure traces and rewrites its own guidance. After 21 iterations it hit 100% on the search set and 90% on holdout. Total cost: $26. And the most important thing it taught me had nothing to do with prompts.</p>
+
+    <!-- Hero stats grid -->
+    <div class="stats">
+      <div class="stat hero-stat">
+        <div class="num">80% → 100%</div>
+        <div class="lbl">Search set accuracy</div>
+        <div class="detail">24/30 → 30/30 over 21 iterations</div>
+      </div>
+      <div class="stat">
+        <div class="num">90%</div>
+        <div class="lbl">Holdout pass rate</div>
+        <div class="detail">9/10 on untouched tasks — the number I trust</div>
+      </div>
+      <div class="stat">
+        <div class="num">$26</div>
+        <div class="lbl">Total cost</div>
+        <div class="detail">~$21 API + ~$5 GPU across 3 machine classes</div>
+      </div>
+    </div>
+
+    <div id="tldr" class="tldr">
+      <h3>TL;DR</h3>
+      <p><strong>What I built:</strong> a meta-optimization loop over a small ML hyperparameter advisor. An outer model reads failure traces from an inner agent, proposes edits to its system prompt, and keeps whatever scores better. No fine-tuning. No gradient updates.</p>
+      <p><strong>The result:</strong> 80% → 100% on a 30-task benchmark across 21 iterations. 90% on a locked holdout set. $26 total.</p>
+      <p><strong>The surprise:</strong> the GPU architecture change (depth=8 on H100) was 15× larger than the prompt-optimization win. The meta-agent told us what to look for first. The hardware determined whether it worked.</p>
+      <p><strong>The benchmark, all 21 evolution configs, and the full framework</strong> are open source and linked at the bottom.</p>
+    </div>
+
+    <div class="section-nav">
+      <h3>Five lessons</h3>
+      <ol>
+        <li><a href="#lesson-1">Failures are free training data</a></li>
+        <li><a href="#lesson-2">Prompts are programs</a></li>
+        <li><a href="#lesson-3">Exceptions are a code smell, even in prompts</a></li>
+        <li><a href="#lesson-4">Prompt edits must be length-neutral</a></li>
+        <li><a href="#lesson-5">Prompts transfer across models; architecture doesn't transfer across hardware</a></li>
+      </ol>
+    </div>
+
+    <h2 id="how-it-works">How the Loop Works</h2>
+
+    <p>The idea is straightforward. You have an inner agent doing a task. You have a verifier that grades it. And you have an outer loop — the meta-agent — that reads the failure traces and proposes edits to the inner agent's system prompt.</p>
+
+    <figure>
+      <object type="image/svg+xml" data="assets/architecture.svg" aria-label="Meta-agent optimization loop architecture">Meta-agent loop architecture</object>
+      <figcaption>The three-component loop. The outer proposer reads failures, rewrites the prompt. The inner agent uses the new prompt to propose hyperparameter changes. The deterministic verifier checks against ground truth.</figcaption>
+    </figure>
+
+    <p>The benchmark: 30 tasks derived from those 16 real Part 1 experiments. Each task gives the inner agent an experiment log, a training script, and a context brief — and asks it to name the single best next hyperparameter change. The verifier checks against the actual outcome. No LLM judge. Either you got it right or you didn't.</p>
+
+    <p>The framework is <a href="https://github.com/canvas-org/meta-agent">canvas-org/meta-agent</a>, which handles the loop mechanics, file-based memory, and candidate tracking.</p>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2 id="lesson-1">Lesson 1: Failures Are Free Training Data</h2>
+
+    <p>Baseline inner model — no custom guidance, just the default prompt — scored 80% on 30 tasks (24/30). It handles the easy cases fine. Architecture exploration is intuitive: if you haven't tried sliding window attention, try it. Where it stumbles is on tasks that require phase awareness or careful reading of a context brief.</p>
+
+    <p>That 80% baseline matters because it isn't zero. The inner model is already good. What the outer loop is doing is hunting for the last 20% — the tasks where the model's default reasoning leads it somewhere plausible but wrong.</p>
+
+    <div class="callout learned">
+      Those failures are the training signal. The outer loop reads them, patterns them, and writes a rule. No human labeling, no fine-tuning, no gradient updates. Just a proposer model reading errors and writing better instructions.
+    </div>
+
+    <figure>
+      <object type="image/svg+xml" data="assets/progress.svg" aria-label="Pass rate over 21 iterations">Pass rate over 21 iterations</object>
+      <figcaption>Iteration-by-iteration pass rate on the 30-task search set. The regression at evo_007 (when an Exception clause backfired) is visible, followed by recovery at evo_008 when the root cause was fixed.</figcaption>
+    </figure>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2 id="lesson-2">Lesson 2: Prompts Are Programs</h2>
+
+    <p>After 21 iterations, here's what the meta-agent produced:</p>
+
+<pre><code><span class="h3">_ADVISOR_GUIDANCE</span> = <span class="s">"""
+You are an ML experiment advisor. When proposing the next hyperparameter change:
+
+</span><span class="h2">## Step 1 — Enumerate the experimental state</span><span class="s">
+Read results.tsv carefully. Build two lists:
+- TRIED: every parameter (and value) that appears in the description column
+  (exclude the baseline row — it describes the starting state, not a tried experiment)
+- UNTRIED: every tunable parameter from train.py that does NOT appear in TRIED
+
+</span><span class="h2">## Step 2 — Identify the current exploration phase</span><span class="s">
+ML experiments follow a natural phase order. Determine which phase is still active:
+</span><span class="step">1. Architecture</span><span class="s"> — depth, attention window patterns (e.g. L → SSSL, SSSL → S)
+</span><span class="step">2. Training dynamics</span><span class="s"> — batch size, warmdown ratio (including values not yet tested)
+</span><span class="step">3. Model capacity</span><span class="s"> — HEAD_DIM, n_kv_head (GQA), MLP_RATIO, matrix LR multipliers
+</span><span class="step">4. LR schedule</span><span class="s"> — WARMUP_RATIO, FINAL_LR_FRAC (LR floor), embedding/scalar LRs
+   - FINAL_LR_FRAC first trial: use 0.05 (a 5% floor). Do NOT use 0.1 or higher
+     on a first trial — a high LR floor prevents sufficient decay.
+</span><span class="step">5. Regularization</span><span class="s"> — ADAM_BETAS, WEIGHT_DECAY
+
+</span><span class="h2">## Step 3 — Select the phase and pick the best parameter</span><span class="s">
+Scan context.md for any explicit directive about which parameter area to explore.
+If found, start from that phase — do not explore earlier phases even if they have
+untried parameters. The task context is authoritative.
+
+If context.md gives no specific directive, use the standard rule: choose the
+earliest active phase from Step 2.
+
+</span><span class="h2">## Step 4 — Treat train.py code comments as hints, not commands</span><span class="s">
+Code comments that suggest specific values are reminders of candidates,
+not the recommended next step.
+
+</span><span class="h2">## Step 5 — Write proposal.json with the chosen parameter</span><span class="s">
+"""</span></code></pre>
+
+    <p>This isn't prose — it's a decision procedure. Enumerate state. Identify phase. Check for overrides. Pick parameter. Write output. Four rules, in order. The meta-agent wrote better-structured guidance than I would have written by hand, because it was working from evidence of what specifically went wrong.</p>
+
+    <div class="callout learned">
+      What it converged on is exactly what a senior ML engineer would tell a junior one in week one: explore architecture before schedule, don't skip phases, always try LR floor at 5% not 10%, respect what the context brief is telling you to do. The meta-agent rediscovered standard practice from failure traces.
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2 id="lesson-3">Lesson 3: Exceptions Are a Code Smell, Even in Prompts</h2>
+
+    <p>The most instructive failure in the whole run was evo_004.</p>
+
+    <p>After evo_001 established phase ordering and reached 85%, the proposer looked at the remaining failures. Two of them (task_14 and task_18) involved cases where the context brief gave an explicit LR schedule directive, but the inner model kept following phase ordering and proposing architecture changes instead. Plausible diagnosis: add an exception.</p>
+
+    <p>So evo_004 added this:</p>
+
+    <blockquote>
+      Exception: when a comment in <code>train.py</code> names a specific numeric value for an untried parameter, use that value exactly.
+    </blockquote>
+
+    <p>This was wrong in a subtle way. The proposer had conflated two different signals — <code>context.md</code> directives (authoritative, from the experimenter) and <code>train.py</code> code comments (implementation hints, from whoever wrote the training code). By treating code comments as override-worthy, it created a backdoor that let the inner model bypass phase ordering for the wrong reasons.</p>
+
+    <p>evo_004 fixed task_18 and task_20, and broke task_15 and task_17. Net: zero improvement. evo_007 tried a different angle and regressed to 80%.</p>
+
+    <p>evo_008 finally got it right by doing two things: removing the Exception clause entirely, and adding explicit instruction about how to distinguish <code>context.md</code> directives from code comments. No exceptions. Root cause fixed.</p>
+
+    <p>Result: 95%. One task still failing.</p>
+
+    <div class="callout insight">
+      The pattern is identical to what experienced engineers mean when they say "exceptions are a code smell." A patch for a symptom is not a fix for the root cause.
+    </div>
+
+    <p>Two early iterations (evo_002 and evo_003) also failed outright — the proposer model hit its turn limit before producing a complete config. Complex reasoning in a single unstructured pass, with no explicit scaffolding, tends to run long. The framework retried these automatically, but they're a reminder that the proposer is itself an agent that can fail.</p>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2 id="lesson-4">Lesson 4: Prompt Edits Must Be Length-Neutral</h2>
+
+    <p>After evo_008 hit 95%, the next six iterations (evo_009 through evo_014) plateaued. Only task_02 kept failing. The proposer analyzed it across six prior configs and found something subtle.</p>
+
+    <p>The <code>results.tsv</code> file always has a "baseline" row — the very first row, describing the model's starting state. The prompt's Step 1 was telling the inner model to treat every row in results.tsv as a tried experiment. That baseline row was being read as evidence that warmdown=0.5 and LR_floor=0 had already been deliberately tested and discarded.</p>
+
+    <p>So the inner model marked those parameters as TRIED, skipped Phase 2 (training dynamics) entirely, and jumped to the wrong phase. task_02 required proposing a warmdown adjustment — and the model thought it had already been covered.</p>
+
+    <p>The fix: reword Step 1 to explicitly exclude baseline rows from the TRIED list. Clear, surgical, correct.</p>
+
+    <div class="callout warn">
+      At 95% accuracy, the inner model is operating near its attention limits. Any net addition to prompt length risks redistributing attention away from the rules that were already working, breaking tasks that were passing fine. The proposer figured this out. The evo_015 fix added 64 characters to Step 1 and removed 146 characters from a redundant fallback clause in Step 3. Net change: 82 characters shorter. The prompt shrank to fix a bug.
+    </div>
+
+    <p>That's the real craft at 95% → 100%: not adding new guidance, but fixing a data interpretation bug while keeping the prompt the same size. Length-neutral editing. Prompt surgery is precise work.</p>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2 id="lesson-5">Lesson 5: Prompts Transfer Across Models; Architecture Doesn't Transfer Across Hardware</h2>
+
+    <p>Two things happened after evo_015 that reframed the whole project.</p>
+
+    <p><strong>First, cross-model transfer.</strong> I ran the same <code>_ADVISOR_GUIDANCE</code> — unchanged — on Mistral Small 24B and Llama 3.1 8B via OpenRouter:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Model</th><th>Baseline</th><th>With optimized prompt</th></tr>
+        <tr><td>Original inner model</td><td>80%</td><td class="best">100% (after 21 iterations)</td></tr>
+        <tr><td>Llama 3.1 8B</td><td>87%</td><td>87% (different tasks pass/fail)</td></tr>
+        <tr><td>Mistral Small 24B</td><td>87%</td><td class="best">90%</td></tr>
+      </table>
+    </div>
+
+    <p>Mistral Small 24B gained 3 percentage points with zero modification. Llama 3.1 8B stayed flat on count but changed which tasks it got right. The rules the meta-agent discovered — phase ordering, context override, baseline-row exclusion — describe what good ML research reasoning looks like. They're not model-specific. They transferred.</p>
+
+    <p><strong>Second, the GPU results.</strong> I ran the top proposals from the optimized agent on actual hardware — A40, L40S, and H100 via RunPod:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Config</th><th>A40 (val_bpb)</th><th>L40S (val_bpb)</th><th>H100 (val_bpb)</th></tr>
+        <tr><td>Baseline (depth=6, vanilla)</td><td>1.0980</td><td>1.0821</td><td>1.0950</td></tr>
+        <tr><td>depth=6, full optimized</td><td>1.0949</td><td class="best">1.0673</td><td>1.0779</td></tr>
+        <tr><td>SSSL window attention only</td><td>1.0961</td><td>1.0801</td><td>1.0844</td></tr>
+        <tr><td>depth=8, optimized schedule</td><td>1.1017</td><td>—</td><td class="best">1.0318</td></tr>
+      </table>
+    </div>
+
+    <figure>
+      <object type="image/svg+xml" data="assets/gpu_comparison.svg" aria-label="val_bpb across GPU classes">GPU comparison — val_bpb (lower is better)</object>
+      <figcaption>val_bpb across A40, L40S, and H100. The H100 depth=8 result (1.0318) is an outlier — 0.046 better than the best depth=6 result on that hardware. The depth=8 config actively hurt on A40.</figcaption>
+    </figure>
+
+    <p>On every GPU, the meta-agent's optimized prompt improved val_bpb by ~0.003. Real, consistent, reproducible. But on H100, depth=8 with the optimized schedule hit 1.0318 — a 0.046 improvement over the best depth=6 result on that hardware. Fifteen times larger than the prompt-optimization win.</p>
+
+    <div class="callout learned">
+      Good prompts transfer across model families. Architecture choices depend on your hardware. These are different levers.
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2>WOW MOMENT: The H100 Depth=8 Reveal</h2>
+
+    <p>On A40, depth=8 actively hurt performance. val_bpb went from 1.0980 (baseline) to 1.1017. The A40 didn't have the compute headroom to train a deeper model to convergence within the step budget. The model was underbaked. So depth=8 went into the "doesn't work" column and stayed there.</p>
+
+    <p>Then I ran the same config on an H100.</p>
+
+    <blockquote>
+      val_bpb: 1.0318. The best result across all three GPUs by a wide margin.
+    </blockquote>
+
+    <p>The architecture the A40 had "rejected" was actually the correct architecture. It just needed a bigger GPU to prove it. The meta-agent's Phase 1 rule — always explore architecture before schedule — is vindicated here in a way I didn't anticipate when I designed the benchmark. Architecture depth is a hardware-dependent lever. Whether depth=8 helps or hurts is a function of your GPU budget, not your prompt.</p>
+
+    <p>There's also a counterintuitive footnote: the L40S completed 1,891 training steps on the same model. The H100 completed 1,699. The smaller, cheaper GPU ran more steps. At sub-50M parameter scale, kernel overhead dominates — H100's advantages are in throughput on large tensors, not on tiny models where every forward pass is a rounding error in GPU time. For anything under 50M parameters, an L40S at $0.79/hr is a better deal than an H100 at $2.99/hr.</p>
+
+    <div class="callout insight">
+      The meta-agent optimized the prompt. The prompt told us to look at architecture first. The architecture decision depended on the hardware. The right answer was always hardware-conditional. The meta-agent didn't know that — but the order of investigation it enforced led us there.
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2>Holdout: The Honest Assessment</h2>
+
+    <p>Holdout ran twice — baseline and evo_015. The 10 holdout tasks were untouched throughout the optimization run:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Holdout</th><th>Baseline</th><th>evo_015</th></tr>
+        <tr><td>Pass rate</td><td>8/10 (80%)</td><td class="best">9/10 (90%)</td></tr>
+      </table>
+    </div>
+
+    <p>task_05 failed in both versions and probably represents a genuinely hard case the current guidance doesn't cover. task_16 stayed passing. Everything else transferred cleanly from the search set.</p>
+
+    <p>The 90% holdout result is the number I actually trust. The 100% search-set result could have baked in search-set overfitting. The holdout confirms the gains are real.</p>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2>What's Next</h2>
+
+    <p>A few threads worth pulling.</p>
+
+    <p><strong>The proposer is the bottleneck.</strong> The outer loop improved the inner agent by 20 percentage points. But the proposer itself — reading failure traces and writing configs — ran on default instructions the whole time. What happens if you run meta-agent on the meta-agent? Optimize the proposer's own prompts for "fewer turn-limit failures" and "faster convergence." I don't have an answer yet.</p>
+
+    <p><strong>Unlabeled traces.</strong> This experiment used a fully labeled benchmark. In practice, you often don't have ground truth. The canvas-org framework supports LLM-judge scoring on unlabeled production traces. Their tau-bench results (67% to 87% via judge-based search) suggest it works. Worth trying on a real task with no known ground truth.</p>
+
+    <p><strong>Composing discovered rules.</strong> The phase-ordering and context-override rules the meta-agent found are general enough that I could apply them to a different ML domain without modification. Rules discovered on one benchmark might transfer to another. That's a different kind of leverage than prompt engineering.</p>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:48px 0">
+
+    <h2 id="try">Try It Yourself</h2>
+
+    <p>The framework is open source:</p>
+
+<pre><code><span class="k">git</span> clone https://github.com/canvas-org/meta-agent
+<span class="k">cd</span> meta-agent
+<span class="k">pip</span> install -e .
+
+<span class="k">python</span> -m meta_agent.outer_loop \
+    --benchmark benchmarks/tau3/benchmark.yaml \
+    --iterations 10 \
+    --model &lt;your-inner-model&gt;</code></pre>
+
+    <p>The ml-advisor benchmark I built (all 30 tasks, ground truth, verifier) is in <code>benchmarks/ml-advisor/</code> in my project repo. If you want to run the same optimization — same tasks, same verifier, same setup — it's all there.</p>
+
+    <p>The 90-second terminal demo of the whole pipeline is in the repo as well.</p>
+
+    <p>What you need: an agent that does something, a way to evaluate whether it did it correctly, and ~$10–15 in API budget for 8–10 iterations. Add another $5 in GPU time if you want to validate the winners on real hardware.</p>
+
+    <p>What I'd genuinely want to know: if you run this on a different domain, what rules does the meta-agent discover? Are they similarly "obvious in retrospect" or genuinely surprising? Hit the comments.</p>
+
+    <p style="margin-top:32px">
+      <strong>Repo:</strong> <a href="https://github.com/abhid1234/meta-agent-improver">github.com/abhid1234/meta-agent-improver</a><br>
+      <strong>Framework:</strong> <a href="https://github.com/canvas-org/meta-agent">github.com/canvas-org/meta-agent</a><br>
+      <strong>Part 1 (the overnight autoresearch run):</strong> <a href="https://open.substack.com/pub/abhid/p/i-ran-an-autonomous-ai-research-agent">open.substack.com/pub/abhid/p/i-ran-an-autonomous-ai-research-agent</a>
+    </p>
+
+    <div class="author">
+      <h3>Abhi Das</h3>
+      <p>I tinker on AI/ML projects on the side and write about what breaks, what I learn, and what surprised me. This newsletter is where those tinkerings land.</p>
+      <p>
+        <a href="https://substack.com/@abhidaas">Substack</a>
+        <a href="https://github.com/abhid1234">GitHub</a>
+        <a href="https://github.com/canvas-org/meta-agent">Framework</a>
+      </p>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  JustCurious &middot; <a href="https://github.com/abhid1234/meta-agent-improver" style="color:var(--blue);">Source code</a> &middot; <a href="https://github.com/canvas-org/meta-agent" style="color:var(--blue);">Framework</a>
+</footer>
+
+</body>
+</html>

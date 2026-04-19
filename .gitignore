@@ -7,3 +7,11 @@ meta-agent/
 uv.lock
 .python-version
 .claude/
+gpu_validation/ambient.mp3
+gpu_validation/demo_concat.mp4
+gpu_validation/endcard.mp4
+gpu_validation/intro.mp4
+gpu_validation/outro.mp4
+gpu_validation/takeaways.mp4
+gpu_validation/title.mp4
+gpu_validation/user_soundtrack_trimmed.m4a
