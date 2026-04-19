@@ -15,3 +15,14 @@ gpu_validation/outro.mp4
 gpu_validation/takeaways.mp4
 gpu_validation/title.mp4
 gpu_validation/user_soundtrack_trimmed.m4a
+
+# Launch / marketing assets — kept local, not pushed
+docs/
+content.md
+social.md
+gpu_validation/meta-agent-demo.cast
+gpu_validation/meta-agent-demo.gif
+gpu_validation/meta-agent-demo.mp4
+gpu_validation/meta-agent-demo-music.mp4
+gpu_validation/meta-agent-thumbnail.png
+gpu_validation/overlays/
